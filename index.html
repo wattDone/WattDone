@@ -4,94 +4,698 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>WattDone ⚡</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { background: #0c0c10; color: #f0f0f0; font-family: 'Segoe UI', sans-serif; min-height: 100vh; }
-.topbar { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid rgba(255,255,255,0.06); }
-.logo { font-size: 20px; font-weight: 900; cursor: pointer; }
-.logo span { color: #f59e0b; }
-.badge { background: #f59e0b; color: #000; font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: 700; margin-left: 6px; }
-.langs { display: flex; gap: 4px; }
-.lang-btn { background: transparent; border: none; font-size: 16px; cursor: pointer; padding: 4px 6px; border-radius: 6px; }
-.lang-btn.active { background: rgba(255,255,255,0.15); }
-.container { max-width: 520px; margin: 0 auto; padding: 0 20px 40px; }
+:root {
+  --bg: #08090d;
+  --bg2: #0f1117;
+  --bg3: #151720;
+  --amber: #f59e0b;
+  --amber2: #fbbf24;
+  --blue: #3b82f6;
+  --blue2: #60a5fa;
+  --green: #10b981;
+  --red: #ef4444;
+  --purple: #8b5cf6;
+  --text: #f1f1f3;
+  --text2: #9ca3af;
+  --text3: #4b5563;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.12);
+  --glow-amber: 0 0 30px rgba(245,158,11,0.15);
+  --glow-blue: 0 0 30px rgba(59,130,246,0.15);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Ambient background */
+body::before {
+  content:'';
+  position:fixed;
+  top:-200px; left:-200px;
+  width:600px; height:600px;
+  background: radial-gradient(circle, rgba(245,158,11,0.04) 0%, transparent 70%);
+  pointer-events:none;
+  z-index:0;
+}
+body::after {
+  content:'';
+  position:fixed;
+  bottom:-200px; right:-200px;
+  width:600px; height:600px;
+  background: radial-gradient(circle, rgba(59,130,246,0.04) 0%, transparent 70%);
+  pointer-events:none;
+  z-index:0;
+}
+
+/* TOPBAR */
+.topbar {
+  position: sticky;
+  top:0;
+  z-index: 100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 20px;
+  background: rgba(8,9,13,0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-family: 'Syne', sans-serif;
+  font-weight: 900;
+  font-size: 20px;
+  letter-spacing: -0.5px;
+}
+.logo-bolt {
+  width: 32px; height: 32px;
+  background: linear-gradient(135deg, #f59e0b, #f97316);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  box-shadow: 0 0 16px rgba(245,158,11,0.4);
+}
+.logo span { color: var(--amber); }
+.badge-v {
+  background: linear-gradient(135deg, var(--amber), #f97316);
+  color: #000;
+  font-size: 9px;
+  padding: 2px 7px;
+  border-radius: 20px;
+  font-weight: 800;
+  font-family: 'DM Sans', sans-serif;
+  letter-spacing: 0.5px;
+}
+
+.langs {
+  display: flex;
+  gap: 2px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 4px;
+}
+.lang-btn {
+  background: transparent;
+  border: none;
+  font-size: 15px;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 8px;
+  transition: background 0.15s;
+  line-height: 1;
+}
+.lang-btn.active { background: rgba(255,255,255,0.12); }
+
+/* CONTAINER */
+.container { max-width: 520px; margin: 0 auto; padding: 0 18px 60px; position:relative; z-index:1; }
 .screen { display: none; padding-top: 28px; }
-.screen.active { display: block; }
-.hero { text-align: center; margin-bottom: 32px; }
-.hero-icon { font-size: 48px; margin-bottom: 12px; }
-.hero-title { font-size: 22px; font-weight: 900; color: #fff; margin-bottom: 6px; line-height: 1.3; }
-.hero-sub { font-size: 13px; color: #555; }
-.mode-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 18px 16px; margin-bottom: 12px; cursor: pointer; display: flex; align-items: center; gap: 14px; transition: border 0.2s; }
-.mode-card:hover { border-color: #f59e0b; }
-.mode-card.master:hover { border-color: #3b82f6; }
-.mode-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
-.mode-icon.c { background: rgba(245,158,11,0.15); }
-.mode-icon.m { background: rgba(59,130,246,0.15); }
-.mode-label { font-weight: 800; font-size: 16px; color: #fff; }
-.mode-sub { font-size: 12px; color: #666; margin-top: 3px; }
-.arrow { margin-left: auto; color: #444; font-size: 20px; }
-.stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 24px; }
-.stat { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 14px 10px; text-align: center; }
-.stat-v { font-size: 18px; font-weight: 900; color: #f59e0b; }
-.stat-l { font-size: 10px; color: #555; margin-top: 3px; }
-.back-btn { background: none; border: none; color: #666; cursor: pointer; font-size: 13px; padding: 0; margin-bottom: 20px; }
-.section-title { font-size: 18px; font-weight: 900; color: #fff; margin-bottom: 16px; }
-.country-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
-.country-btn { background: rgba(255,255,255,0.05); border: none; border-radius: 8px; padding: 7px 14px; cursor: pointer; font-weight: 700; font-size: 13px; color: #888; transition: all 0.15s; }
-.country-btn.active { background: #f59e0b; color: #000; }
-.country-btn.active-blue { background: #3b82f6; color: #fff; }
-.menu-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 16px; margin-bottom: 10px; cursor: pointer; display: flex; align-items: center; gap: 14px; transition: border 0.2s; }
-.menu-card:hover { border-color: #3b82f6; }
-.menu-icon { width: 44px; height: 44px; border-radius: 12px; background: rgba(59,130,246,0.1); display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
-.menu-label { font-weight: 700; font-size: 14px; color: #fff; }
-.menu-sub { font-size: 12px; color: #666; margin-top: 3px; }
-textarea, input[type=text], input[type=number] { width: 100%; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 12px 14px; color: #f0f0f0; font-size: 14px; font-family: inherit; outline: none; transition: border 0.2s; }
-textarea:focus, input:focus { border-color: #f59e0b; }
+.screen.active { display: block; animation: fadeUp 0.3s ease; }
+
+@keyframes fadeUp {
+  from { opacity:0; transform: translateY(12px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+
+/* HOME HERO */
+.hero {
+  text-align: center;
+  padding: 40px 0 32px;
+  position: relative;
+}
+.hero-glow {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(245,158,11,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-bolt {
+  width: 72px; height: 72px;
+  background: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(249,115,22,0.15));
+  border: 1px solid rgba(245,158,11,0.3);
+  border-radius: 20px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 34px;
+  margin: 0 auto 20px;
+  box-shadow: 0 0 40px rgba(245,158,11,0.12);
+  animation: pulse-bolt 3s ease-in-out infinite;
+}
+@keyframes pulse-bolt {
+  0%,100% { box-shadow: 0 0 20px rgba(245,158,11,0.12); }
+  50%      { box-shadow: 0 0 50px rgba(245,158,11,0.25); }
+}
+
+.hero-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 26px;
+  font-weight: 900;
+  color: var(--text);
+  margin-bottom: 8px;
+  line-height: 1.25;
+  letter-spacing: -0.5px;
+}
+.hero-title span { color: var(--amber); }
+
+.hero-sub {
+  font-size: 12px;
+  color: var(--text3);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-weight: 500;
+  margin-top: 10px;
+}
+
+.country-dots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+.country-dot {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 4px 10px;
+  font-size: 11px;
+  color: var(--text3);
+  font-weight: 600;
+}
+
+/* MODE CARDS */
+.mode-cards { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
+
+.mode-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+.mode-card::before {
+  content:'';
+  position:absolute;
+  inset:0;
+  opacity:0;
+  transition: opacity 0.2s;
+}
+.mode-card.customer::before { background: linear-gradient(135deg, rgba(245,158,11,0.04), transparent); }
+.mode-card.master::before { background: linear-gradient(135deg, rgba(59,130,246,0.04), transparent); }
+.mode-card:hover { transform: translateY(-2px); }
+.mode-card.customer:hover { border-color: rgba(245,158,11,0.3); box-shadow: var(--glow-amber); }
+.mode-card.customer:hover::before { opacity:1; }
+.mode-card.master:hover { border-color: rgba(59,130,246,0.3); box-shadow: var(--glow-blue); }
+.mode-card.master:hover::before { opacity:1; }
+
+.mode-icon {
+  width: 52px; height: 52px;
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px;
+  flex-shrink: 0;
+}
+.mode-icon.c { background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.2); }
+.mode-icon.m { background: rgba(59,130,246,0.12); border: 1px solid rgba(59,130,246,0.2); }
+
+.mode-info { flex: 1; }
+.mode-label {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 16px;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.mode-sub { font-size: 12px; color: var(--text3); line-height: 1.4; }
+
+.mode-arrow {
+  width: 32px; height: 32px;
+  border-radius: 10px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text3);
+  font-size: 16px;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+.mode-card:hover .mode-arrow { background: var(--border2); color: var(--text); }
+
+/* STATS */
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+}
+.stat {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px 12px;
+  text-align: center;
+  transition: border 0.2s;
+}
+.stat:hover { border-color: var(--border2); }
+.stat-v {
+  font-family: 'Syne', sans-serif;
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--amber);
+  line-height: 1;
+}
+.stat-l { font-size: 10px; color: var(--text3); margin-top: 5px; letter-spacing: 0.5px; }
+
+/* BACK BTN */
+.back-btn {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  color: var(--text2);
+  cursor: pointer;
+  font-size: 12px;
+  padding: 7px 14px;
+  margin-bottom: 20px;
+  border-radius: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  transition: all 0.15s;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.back-btn:hover { border-color: var(--border2); color: var(--text); }
+
+/* SECTION TITLE */
+.section-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 20px;
+  font-weight: 900;
+  color: var(--text);
+  margin-bottom: 18px;
+  letter-spacing: -0.3px;
+}
+
+/* PAGE HEADER */
+.page-header {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 18px 18px 16px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.page-header-icon {
+  width: 46px; height: 46px;
+  border-radius: 13px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+.page-header-icon.amber { background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.2); }
+.page-header-icon.blue { background: rgba(59,130,246,0.12); border: 1px solid rgba(59,130,246,0.2); }
+.page-header-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 17px; font-weight: 800;
+  color: var(--text);
+}
+.page-header-sub { font-size: 11px; color: var(--text3); margin-top: 3px; }
+
+/* LABEL */
+.label {
+  font-size: 10px;
+  color: var(--text3);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+/* COUNTRY SELECTOR */
+.country-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 18px; }
+.country-btn {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 7px 14px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 12px;
+  color: var(--text3);
+  transition: all 0.15s;
+  font-family: 'DM Sans', sans-serif;
+}
+.country-btn:hover { border-color: var(--border2); color: var(--text2); }
+.country-btn.active { background: rgba(245,158,11,0.12); border-color: rgba(245,158,11,0.4); color: var(--amber); }
+.country-btn.active-blue { background: rgba(59,130,246,0.12); border-color: rgba(59,130,246,0.4); color: var(--blue2); }
+
+/* MENU CARDS */
+.menu-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+.menu-card:hover { border-color: rgba(59,130,246,0.3); transform: translateX(3px); box-shadow: var(--glow-blue); }
+.menu-card.amber:hover { border-color: rgba(245,158,11,0.3); box-shadow: var(--glow-amber); }
+.menu-icon {
+  width: 46px; height: 46px;
+  border-radius: 13px;
+  background: rgba(59,130,246,0.1);
+  border: 1px solid rgba(59,130,246,0.15);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+.menu-icon.amber { background: rgba(245,158,11,0.1); border-color: rgba(245,158,11,0.15); }
+.menu-label { font-weight: 700; font-size: 14px; color: var(--text); font-family: 'Syne', sans-serif; }
+.menu-sub { font-size: 11px; color: var(--text3); margin-top: 3px; }
+
+/* FORM ELEMENTS */
+textarea, input[type=text], input[type=number] {
+  width: 100%;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  padding: 13px 16px;
+  color: var(--text);
+  font-size: 14px;
+  font-family: 'DM Sans', sans-serif;
+  outline: none;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+textarea:focus, input:focus {
+  border-color: rgba(245,158,11,0.4);
+  box-shadow: 0 0 0 3px rgba(245,158,11,0.06);
+}
 textarea { resize: none; }
-.btn { width: 100%; padding: 14px; border: none; border-radius: 12px; font-size: 15px; font-weight: 800; cursor: pointer; margin-top: 10px; transition: opacity 0.2s; }
-.btn-yellow { background: #f59e0b; color: #000; }
-.btn-blue { background: #3b82f6; color: #fff; }
-.btn-gray { background: rgba(255,255,255,0.06); color: #ccc; }
-.btn:disabled { opacity: 0.4; cursor: not-allowed; }
-.result-box { background: rgba(255,255,255,0.03); border: 1px solid rgba(245,158,11,0.2); border-radius: 14px; padding: 18px; margin-top: 16px; font-size: 13px; line-height: 1.8; color: #ccc; white-space: pre-wrap; }
-.warning-box { background: rgba(255,200,0,0.06); border: 1px solid rgba(255,200,0,0.15); border-radius: 10px; padding: 10px 14px; font-size: 11px; color: #888; margin-top: 12px; line-height: 1.5; }
-.info-box { background: rgba(59,130,246,0.06); border: 1px solid rgba(59,130,246,0.2); border-radius: 10px; padding: 12px 14px; font-size: 12px; color: #aaa; margin-top: 12px; line-height: 1.6; }
-.info-title { font-size: 11px; color: #3b82f6; font-weight: 700; margin-bottom: 5px; }
-.danger-box { background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.2); border-radius: 10px; padding: 12px 14px; font-size: 12px; color: #aaa; margin-top: 10px; line-height: 1.6; }
-.danger-title { font-size: 11px; color: #ef4444; font-weight: 700; margin-bottom: 5px; }
-.reg-row { display: flex; justify-content: space-between; padding: 11px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
-.reg-key { font-size: 13px; color: #777; }
-.reg-val { font-size: 13px; font-weight: 700; color: #f0f0f0; }
-.watt-row { display: flex; gap: 8px; margin-bottom: 8px; }
+::placeholder { color: var(--text3); }
+
+/* BUTTONS */
+.btn {
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 13px;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  margin-top: 12px;
+  transition: all 0.2s;
+  font-family: 'Syne', sans-serif;
+  letter-spacing: 0.3px;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btn-amber {
+  background: linear-gradient(135deg, #f59e0b, #f97316);
+  color: #000;
+  box-shadow: 0 4px 20px rgba(245,158,11,0.25);
+}
+.btn-amber:hover { transform: translateY(-1px); box-shadow: 0 8px 30px rgba(245,158,11,0.35); }
+.btn-blue {
+  background: linear-gradient(135deg, #3b82f6, #6366f1);
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(59,130,246,0.25);
+}
+.btn-blue:hover { transform: translateY(-1px); box-shadow: 0 8px 30px rgba(59,130,246,0.35); }
+.btn-ghost {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  color: var(--text2);
+}
+.btn-ghost:hover { border-color: var(--border2); color: var(--text); }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; }
+.btn:active { transform: translateY(1px) !important; }
+
+/* RESULT BOX */
+.result-box {
+  background: var(--bg2);
+  border: 1px solid rgba(245,158,11,0.2);
+  border-radius: 16px;
+  padding: 20px;
+  margin-top: 16px;
+  font-size: 13px;
+  line-height: 1.9;
+  color: var(--text2);
+  white-space: pre-wrap;
+  position: relative;
+}
+.result-box::before {
+  content: 'AI ANALİZ SONUCU';
+  font-size: 9px;
+  color: var(--amber);
+  letter-spacing: 2px;
+  font-weight: 800;
+  display: block;
+  margin-bottom: 12px;
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* INFO BOXES */
+.warning-box {
+  background: rgba(245,158,11,0.05);
+  border: 1px solid rgba(245,158,11,0.15);
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-size: 11px;
+  color: var(--text3);
+  margin-top: 12px;
+  line-height: 1.6;
+  display: flex; gap: 8px; align-items: flex-start;
+}
+.info-box {
+  background: rgba(59,130,246,0.05);
+  border: 1px solid rgba(59,130,246,0.15);
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-size: 12px;
+  color: var(--text3);
+  margin-top: 12px;
+  line-height: 1.6;
+}
+.info-title { font-size: 10px; color: var(--blue2); font-weight: 800; margin-bottom: 6px; letter-spacing: 1px; font-family: 'DM Sans', sans-serif; }
+.danger-box {
+  background: rgba(239,68,68,0.05);
+  border: 1px solid rgba(239,68,68,0.15);
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-size: 12px;
+  color: var(--text3);
+  margin-top: 12px;
+  line-height: 1.6;
+}
+.danger-title { font-size: 10px; color: #ef4444; font-weight: 800; margin-bottom: 6px; letter-spacing: 1px; font-family: 'DM Sans', sans-serif; }
+
+/* REG TABLE */
+.reg-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+.reg-key { font-size: 12px; color: var(--text3); }
+.reg-val { font-size: 13px; font-weight: 700; color: var(--text); }
+
+/* WATT */
+.watt-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
 .watt-row input[type=text] { flex: 1; }
 .watt-row input[type=number] { width: 90px; }
-.del-btn { background: rgba(255,68,68,0.1); border: none; border-radius: 8px; padding: 0 12px; color: #ff6666; cursor: pointer; font-size: 18px; }
-.progress-bar { background: rgba(255,255,255,0.05); border-radius: 6px; height: 8px; margin: 10px 0; }
-.progress-fill { height: 8px; border-radius: 6px; transition: width 0.5s; }
-.plan-row { display: flex; justify-content: space-between; align-items: center; padding: 11px 14px; background: rgba(255,255,255,0.03); border-radius: 10px; margin-bottom: 8px; }
-.plan-name { font-size: 13px; font-weight: 700; color: #fff; }
-.plan-detail { font-size: 11px; color: #666; margin-top: 2px; }
-.plan-fuse { font-size: 13px; font-weight: 800; }
-.verify-form input { margin-bottom: 12px; }
-.label { font-size: 11px; color: #555; margin-bottom: 6px; }
-.upload-area { border: 1.5px dashed rgba(255,255,255,0.1); border-radius: 12px; padding: 16px; text-align: center; cursor: pointer; margin-bottom: 10px; transition: border 0.2s; }
-.upload-area:hover { border-color: #f59e0b; }
-.upload-area img { max-height: 140px; border-radius: 8px; }
-.upload-icon { font-size: 26px; margin-bottom: 6px; }
-.upload-text { font-size: 12px; color: #555; }
-.loading { text-align: center; padding: 40px; color: #555; font-size: 14px; }
-.spinner { font-size: 36px; display: inline-block; animation: spin 1.5s linear infinite; }
+.del-btn {
+  background: rgba(239,68,68,0.1);
+  border: 1px solid rgba(239,68,68,0.2);
+  border-radius: 10px;
+  padding: 0 12px;
+  height: 46px;
+  color: #ef4444;
+  cursor: pointer;
+  font-size: 18px;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+.del-btn:hover { background: rgba(239,68,68,0.2); }
+
+.progress-bar {
+  background: var(--bg3);
+  border-radius: 6px;
+  height: 6px;
+  margin: 10px 0;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 6px;
+  border-radius: 6px;
+  transition: width 0.6s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+/* PLAN ROWS */
+.plan-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 13px 16px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  margin-bottom: 8px;
+  transition: border 0.2s;
+}
+.plan-row:hover { border-color: var(--border2); }
+.plan-name { font-size: 13px; font-weight: 700; color: var(--text); }
+.plan-detail { font-size: 10px; color: var(--text3); margin-top: 3px; letter-spacing: 0.3px; }
+.plan-fuse { font-size: 13px; font-weight: 900; font-family: 'Syne', sans-serif; }
+
+/* UPLOAD */
+.upload-area {
+  border: 1.5px dashed rgba(255,255,255,0.1);
+  border-radius: 14px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  margin-bottom: 12px;
+  transition: all 0.2s;
+  background: var(--bg2);
+}
+.upload-area:hover { border-color: rgba(245,158,11,0.3); background: rgba(245,158,11,0.03); }
+.upload-area img { max-height: 160px; border-radius: 10px; }
+.upload-icon { font-size: 28px; margin-bottom: 8px; }
+.upload-text { font-size: 12px; color: var(--text3); }
+.upload-hint { font-size: 10px; color: var(--text3); margin-top: 4px; opacity: 0.6; }
+
+/* LOADING */
+.loading {
+  text-align: center;
+  padding: 50px 20px;
+  color: var(--text3);
+  font-size: 13px;
+}
+.spinner { font-size: 40px; display: inline-block; animation: spin 1.2s linear infinite; }
 @keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
-.toggle-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
-.toggle-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 9px 16px; cursor: pointer; font-size: 13px; font-weight: 700; color: #666; transition: all 0.15s; }
-.toggle-btn.on { background: rgba(59,130,246,0.2); border-color: #3b82f6; color: #3b82f6; }
-.verified-badge { font-size: 12px; color: #3b82f6; margin-top: 4px; }
+.loading-text { margin-top: 16px; font-size: 12px; color: var(--text3); }
+.loading-sub { font-size: 10px; color: var(--text3); opacity: 0.5; margin-top: 6px; }
+
+/* TOGGLES */
+.toggle-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+.toggle-btn {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 9px 16px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text3);
+  transition: all 0.15s;
+  font-family: 'DM Sans', sans-serif;
+}
+.toggle-btn:hover { border-color: var(--border2); color: var(--text2); }
+.toggle-btn.on { background: rgba(59,130,246,0.12); border-color: rgba(59,130,246,0.35); color: var(--blue2); }
+
+/* VERIFY FORM */
+.verify-form input { margin-bottom: 12px; }
+
+/* VERIFIED BADGE */
+.verified-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 11px; color: var(--blue2);
+  background: rgba(59,130,246,0.1);
+  border: 1px solid rgba(59,130,246,0.2);
+  border-radius: 8px;
+  padding: 3px 10px;
+  margin-top: 4px;
+}
+
+/* MASTER HEADER */
+.master-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 18px;
+}
+.master-header-info .section-title { margin-bottom: 4px; }
+
+/* WATT SUMMARY CARD */
+.watt-summary {
+  background: var(--bg2);
+  border-radius: 16px;
+  padding: 18px;
+}
+.watt-summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.watt-label { font-size: 12px; color: var(--text3); }
+.watt-value { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 900; }
+
+/* DIVIDER */
+.divider {
+  height: 1px;
+  background: var(--border);
+  margin: 20px 0;
+}
+
+/* CHIP */
+.chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 3px 10px;
+  font-size: 11px;
+  color: var(--text3);
+  font-weight: 600;
+}
+.chip.green { background: rgba(16,185,129,0.1); border-color: rgba(16,185,129,0.2); color: #10b981; }
+.chip.red { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.2); color: #ef4444; }
+.chip.amber { background: rgba(245,158,11,0.1); border-color: rgba(245,158,11,0.2); color: var(--amber); }
+
+/* FEATURE CHIPS ROW */
+.features-row {
+  display: flex; gap: 6px; flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 12px;
+}
 </style>
 </head>
 <body>
 
 <div class="topbar">
-  <div class="logo" onclick="goHome()">Watt<span>Done</span><span class="badge">v2</span></div>
+  <div class="logo" onclick="goHome()">
+    <div class="logo-bolt">⚡</div>
+    Watt<span>Done</span>
+    <span class="badge-v">v3</span>
+  </div>
   <div class="langs">
     <button class="lang-btn active" onclick="setLang('tr')">🇹🇷</button>
     <button class="lang-btn" onclick="setLang('en')">🇬🇧</button>
@@ -103,89 +707,141 @@ textarea { resize: none; }
 
 <div class="container">
 
-  <!-- HOME -->
+  <!-- ═══════════════ HOME ═══════════════ -->
   <div class="screen active" id="screen-home">
     <div class="hero">
-      <div class="hero-icon">⚡</div>
-      <div class="hero-title" id="txt-tagline">Elektrik İşlerinde Akıllı Asistan</div>
-      <div class="hero-sub">BE · NL · DE · FR · IT · ES</div>
+      <div class="hero-glow"></div>
+      <div class="hero-bolt">⚡</div>
+      <div class="hero-title" id="txt-tagline">Elektrik İşlerinde<br><span>Akıllı Asistan</span></div>
+      <div class="features-row">
+        <span class="chip amber">🤖 AI Destekli</span>
+        <span class="chip">🇪🇺 6 AB Ülkesi</span>
+        <span class="chip">🏢 B2B Paketi</span>
+      </div>
+      <div class="hero-sub" style="margin-top:14px">BE · NL · DE · FR · IT · ES</div>
     </div>
-    <div class="mode-card" onclick="showScreen('customer-home')">
-      <div class="mode-icon c">🏠</div>
-      <div><div class="mode-label" id="txt-customer">Müşteri</div><div class="mode-sub" id="txt-customer-sub">Arıza analizi, watt kontrolü, elektrikçi planı</div></div>
-      <div class="arrow">›</div>
+
+    <div class="mode-cards">
+      <div class="mode-card customer" onclick="showScreen('customer-home')">
+        <div class="mode-icon c">🏠</div>
+        <div class="mode-info">
+          <div class="mode-label" id="txt-customer">Müşteri</div>
+          <div class="mode-sub" id="txt-customer-sub">Arıza analizi, watt kontrolü, elektrikçi planı</div>
+        </div>
+        <div class="mode-arrow">›</div>
+      </div>
+      <div class="mode-card master" onclick="showScreen('master-verify')">
+        <div class="mode-icon m">🔧</div>
+        <div class="mode-info">
+          <div class="mode-label" id="txt-master">Lisanslı Usta</div>
+          <div class="mode-sub" id="txt-master-sub">Teknik asistan, sistem planlayıcı, yönetmelik rehberi</div>
+        </div>
+        <div class="mode-arrow">›</div>
+      </div>
     </div>
-    <div class="mode-card master" onclick="showScreen('master-verify')">
-      <div class="mode-icon m">🔧</div>
-      <div><div class="mode-label" id="txt-master">Lisanslı Usta</div><div class="mode-sub" id="txt-master-sub">Teknik asistan, sistem planlayıcı, yönetmelik rehberi</div></div>
-      <div class="arrow">›</div>
-    </div>
+
     <div class="stats">
       <div class="stat"><div class="stat-v">6</div><div class="stat-l">AB Ülkesi</div></div>
-      <div class="stat"><div class="stat-v">AI</div><div class="stat-l">Destekli</div></div>
-      <div class="stat"><div class="stat-v">B2B</div><div class="stat-l">Firma Paketi</div></div>
+      <div class="stat"><div class="stat-v" style="color:var(--blue2)">AI</div><div class="stat-l">Destekli</div></div>
+      <div class="stat"><div class="stat-v" style="color:var(--green)">B2B</div><div class="stat-l">Firma Paketi</div></div>
     </div>
   </div>
 
-  <!-- CUSTOMER HOME -->
+  <!-- ═══════════════ CUSTOMER HOME ═══════════════ -->
   <div class="screen" id="screen-customer-home">
     <button class="back-btn" onclick="goHome()">← Geri</button>
-    <div class="section-title">🏠 Müşteri Paneli</div>
+    <div class="page-header">
+      <div class="page-header-icon amber">🏠</div>
+      <div>
+        <div class="page-header-title">Müşteri Paneli</div>
+        <div class="page-header-sub">Ev elektriğiniz için AI destekli araçlar</div>
+      </div>
+    </div>
     <div class="label">ÜLKENİZİ SEÇİN</div>
     <div class="country-row" id="country-customer"></div>
-    <div class="menu-card" onclick="showScreen('customer-ai')">
-      <div class="menu-icon">🤖</div>
-      <div><div class="menu-label">Arıza & Sorun Analizi</div><div class="menu-sub">Probleminizi AI ile analiz edin</div></div>
-      <div class="arrow">›</div>
+
+    <div class="menu-card amber" onclick="showScreen('customer-ai')">
+      <div class="menu-icon amber">🤖</div>
+      <div>
+        <div class="menu-label">Arıza & Sorun Analizi</div>
+        <div class="menu-sub">Fotoğraf yükle veya problemi yaz — AI analiz etsin</div>
+      </div>
+      <div class="mode-arrow" style="margin-left:auto">›</div>
     </div>
-    <div class="menu-card" onclick="showScreen('customer-watt')">
-      <div class="menu-icon">🔢</div>
-      <div><div class="menu-label">Watt Kapasite Kontrolü</div><div class="menu-sub">Hattınız yük taşıyabilir mi?</div></div>
-      <div class="arrow">›</div>
+    <div class="menu-card amber" onclick="showScreen('customer-watt')">
+      <div class="menu-icon amber">🔢</div>
+      <div>
+        <div class="menu-label">Watt Kapasite Kontrolü</div>
+        <div class="menu-sub">Hattınız bu yükü taşıyabilir mi?</div>
+      </div>
+      <div class="mode-arrow" style="margin-left:auto">›</div>
     </div>
-    <div class="menu-card" onclick="showScreen('customer-regs')">
-      <div class="menu-icon">📋</div>
-      <div><div class="menu-label">Yönetmelik Bilgisi</div><div class="menu-sub" id="regs-sub-c">Ülke elektrik standartları</div></div>
-      <div class="arrow">›</div>
+    <div class="menu-card amber" onclick="showScreen('customer-regs')">
+      <div class="menu-icon amber">📋</div>
+      <div>
+        <div class="menu-label">Yönetmelik Bilgisi</div>
+        <div class="menu-sub" id="regs-sub-c">Ülke elektrik standartları</div>
+      </div>
+      <div class="mode-arrow" style="margin-left:auto">›</div>
     </div>
   </div>
 
-  <!-- CUSTOMER AI -->
+  <!-- ═══════════════ CUSTOMER AI ═══════════════ -->
   <div class="screen" id="screen-customer-ai">
     <button class="back-btn" onclick="showScreen('customer-home')">← Geri</button>
-    <div class="section-title">⚡ Arıza Analizi</div>
+    <div class="page-header">
+      <div class="page-header-icon amber">🤖</div>
+      <div>
+        <div class="page-header-title">AI Arıza Analizi</div>
+        <div class="page-header-sub">Probleminizi anlatın veya fotoğraf ekleyin</div>
+      </div>
+    </div>
+    <div class="label">FOTOĞRAF (İSTEĞE BAĞLI)</div>
     <div class="upload-area" onclick="document.getElementById('img-c').click()" id="upload-c">
       <div class="upload-icon">📷</div>
-      <div class="upload-text">Fotoğraf yükle (isteğe bağlı)</div>
+      <div class="upload-text">Fotoğraf yükle</div>
+      <div class="upload-hint">Priz, sigorta kutusu, kablo fotoğrafı vb.</div>
     </div>
     <input type="file" id="img-c" accept="image/*" style="display:none" onchange="handleImage('c',this)">
-    <textarea id="ai-input-c" rows="5" placeholder="Probleminizi yazın... (Sigorta atıyor, priz çalışmıyor vb.)"></textarea>
-    <button class="btn btn-yellow" onclick="analyzeCustomer()">⚡ AI ile Analiz Et</button>
+    <div class="label" style="margin-top:4px">PROBLEMİNİZİ ANLATINI</div>
+    <textarea id="ai-input-c" rows="4" placeholder="Örn: Sigorta atıyor, priz çalışmıyor, koku var..."></textarea>
+    <button class="btn btn-amber" onclick="analyzeCustomer()">⚡ AI ile Analiz Et</button>
     <div id="result-c"></div>
   </div>
 
-  <!-- CUSTOMER WATT -->
+  <!-- ═══════════════ CUSTOMER WATT ═══════════════ -->
   <div class="screen" id="screen-customer-watt">
     <button class="back-btn" onclick="showScreen('customer-home')">← Geri</button>
-    <div class="section-title">🔢 Watt Kapasite Kontrolü</div>
+    <div class="page-header">
+      <div class="page-header-icon amber">🔢</div>
+      <div>
+        <div class="page-header-title">Watt Kapasite Kontrolü</div>
+        <div class="page-header-sub">Cihaz ekle, kapasiteyi hesapla</div>
+      </div>
+    </div>
     <div id="watt-list-c"></div>
-    <button class="btn btn-gray" onclick="addDevice()" style="margin-top:0">+ Cihaz Ekle</button>
+    <button class="btn btn-ghost" onclick="addDevice()" style="margin-top:0">+ Cihaz Ekle</button>
     <div id="watt-result-c" style="margin-top:16px"></div>
     <div id="watt-rule-c"></div>
   </div>
 
-  <!-- CUSTOMER REGS -->
+  <!-- ═══════════════ CUSTOMER REGS ═══════════════ -->
   <div class="screen" id="screen-customer-regs">
     <button class="back-btn" onclick="showScreen('customer-home')">← Geri</button>
     <div class="section-title" id="regs-title-c">Yönetmelik</div>
     <div id="regs-content-c"></div>
   </div>
 
-  <!-- MASTER VERIFY -->
+  <!-- ═══════════════ MASTER VERIFY ═══════════════ -->
   <div class="screen" id="screen-master-verify">
     <button class="back-btn" onclick="goHome()">← Geri</button>
-    <div class="section-title">🔧 Usta / Pro Girişi</div>
-    <div style="font-size:12px;color:#555;margin-bottom:20px">Lisanslı elektrikçiler ve firmalar için doğrulama gereklidir.</div>
+    <div class="page-header">
+      <div class="page-header-icon blue">🔧</div>
+      <div>
+        <div class="page-header-title">Pro Giriş</div>
+        <div class="page-header-sub">Lisanslı elektrikçiler ve firmalar için</div>
+      </div>
+    </div>
     <div class="verify-form">
       <div class="label">AD SOYAD / FİRMA ADI</div>
       <input type="text" id="v-name" placeholder="Jan De Vries">
@@ -193,73 +849,95 @@ textarea { resize: none; }
       <input type="text" id="v-company" placeholder="WattElec BVBA · BCE 0123.456.789">
       <div class="label">ELEKTRİK LİSANS NO</div>
       <input type="text" id="v-license" placeholder="P1 / ERK-2024-XXXX">
-      <div class="label" style="margin-top:4px">ÇALIŞTIĞINIZ ÜLKE</div>
+      <div class="label">ÇALIŞTIĞINIZ ÜLKE</div>
       <div class="country-row" id="country-verify"></div>
       <div class="info-box">
-        <div class="info-title">🏢 FİRMA PAKETİ</div>
-        10+ çalışan için toplu kullanıcı hesabı. Özel fiyatlandırma için: <strong>info@wattdone.eu</strong>
+        <div class="info-title">🏢 FİRMA PAKETİ (B2B)</div>
+        10+ çalışan için toplu kullanıcı hesabı. Özel fiyatlandırma:<br><strong style="color:var(--blue2)">info@wattdone.eu</strong>
       </div>
-      <button class="btn btn-blue" onclick="doVerify()" style="margin-top:14px">Doğrulama Başvurusu Gönder →</button>
+      <button class="btn btn-blue" onclick="doVerify()" style="margin-top:14px">✓ Doğrulama Başvurusu Gönder</button>
     </div>
   </div>
 
-  <!-- MASTER HOME -->
+  <!-- ═══════════════ MASTER HOME ═══════════════ -->
   <div class="screen" id="screen-master-home">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
-      <div>
-        <div class="section-title" style="margin-bottom:2px">🔧 Usta Paneli</div>
+    <div class="master-header">
+      <div class="master-header-info">
+        <div class="section-title" style="margin-bottom:4px">🔧 Usta Paneli</div>
         <div class="verified-badge" id="verified-name">✓ Doğrulandı</div>
       </div>
-      <button class="btn btn-gray" onclick="goHome()" style="width:auto;padding:8px 14px;font-size:12px;margin:0">Çıkış</button>
+      <button class="btn btn-ghost" onclick="goHome()" style="width:auto;padding:8px 16px;font-size:12px;margin:0">Çıkış</button>
     </div>
+
     <div class="menu-card" onclick="showScreen('master-ai')">
       <div class="menu-icon">🤖</div>
       <div><div class="menu-label">AI Teknik Asistan</div><div class="menu-sub">Şema okuma, teknik soru, fotoğraf analizi</div></div>
-      <div class="arrow">›</div>
+      <div class="mode-arrow" style="margin-left:auto">›</div>
     </div>
     <div class="menu-card" onclick="showScreen('master-plan')">
       <div class="menu-icon">📐</div>
       <div><div class="menu-label">Sıfırdan Sistem Planlayıcı</div><div class="menu-sub">Evin tüm elektrik altyapısını planla</div></div>
-      <div class="arrow">›</div>
+      <div class="mode-arrow" style="margin-left:auto">›</div>
     </div>
     <div class="menu-card" onclick="showScreen('master-watt')">
       <div class="menu-icon">🔢</div>
       <div><div class="menu-label">Watt & Devre Hesaplayıcı</div><div class="menu-sub">Kapasite kontrolü, yönetmelik uyarıları</div></div>
-      <div class="arrow">›</div>
+      <div class="mode-arrow" style="margin-left:auto">›</div>
     </div>
     <div class="menu-card" onclick="showScreen('master-regs')">
       <div class="menu-icon">📚</div>
       <div><div class="menu-label">AB Yönetmelik Veritabanı</div><div class="menu-sub">6 ülke — güncel standartlar</div></div>
-      <div class="arrow">›</div>
+      <div class="mode-arrow" style="margin-left:auto">›</div>
     </div>
   </div>
 
-  <!-- MASTER AI -->
+  <!-- ═══════════════ MASTER AI ═══════════════ -->
   <div class="screen" id="screen-master-ai">
     <button class="back-btn" onclick="showScreen('master-home')">← Geri</button>
-    <div class="section-title">🤖 AI Teknik Asistan</div>
-    <div class="label">YÖNETMELİK</div>
+    <div class="page-header">
+      <div class="page-header-icon blue">🤖</div>
+      <div>
+        <div class="page-header-title">AI Teknik Asistan</div>
+        <div class="page-header-sub">Profesyonel teknik analiz ve standart rehberi</div>
+      </div>
+    </div>
+    <div class="label">YÖNETMELİK STANDARDI</div>
     <div class="country-row" id="country-master-ai"></div>
+    <div class="label">FOTOĞRAF / ŞEMA (İSTEĞE BAĞLI)</div>
     <div class="upload-area" onclick="document.getElementById('img-m').click()" id="upload-m">
       <div class="upload-icon">📷</div>
       <div class="upload-text">Şema / Etiket / Pano fotoğrafı yükle</div>
+      <div class="upload-hint">JPEG, PNG — Max 10MB</div>
     </div>
     <input type="file" id="img-m" accept="image/*" style="display:none" onchange="handleImage('m',this)">
-    <textarea id="ai-input-m" rows="5" placeholder="Teknik sorunuzu yazın... (Bağlantı şeması, devre hesabı, ürün analizi vb.)"></textarea>
+    <div class="label">TEKNİK SORUNUZ</div>
+    <textarea id="ai-input-m" rows="4" placeholder="Bağlantı şeması, devre hesabı, ürün analizi..."></textarea>
     <button class="btn btn-blue" onclick="analyzeMaster()">🔧 Teknik Analiz Et</button>
     <div id="result-m"></div>
   </div>
 
-  <!-- MASTER PLAN -->
+  <!-- ═══════════════ MASTER PLAN ═══════════════ -->
   <div class="screen" id="screen-master-plan">
     <button class="back-btn" onclick="showScreen('master-home')">← Geri</button>
-    <div class="section-title">📐 Sıfırdan Sistem Planlayıcı</div>
+    <div class="page-header">
+      <div class="page-header-icon blue">📐</div>
+      <div>
+        <div class="page-header-title">Sistem Planlayıcı</div>
+        <div class="page-header-sub">Sıfırdan elektrik altyapısı tasarla</div>
+      </div>
+    </div>
     <div class="label">ÜLKE YÖNETMELİĞİ</div>
     <div class="country-row" id="country-master-plan"></div>
-    <div class="label">TOPLAM ALAN (m²)</div>
-    <input type="number" id="plan-area" value="80" style="margin-bottom:12px">
-    <div class="label">ODA SAYISI</div>
-    <input type="number" id="plan-rooms" value="5" style="margin-bottom:12px">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+      <div>
+        <div class="label">TOPLAM ALAN (m²)</div>
+        <input type="number" id="plan-area" value="80">
+      </div>
+      <div>
+        <div class="label">ODA SAYISI</div>
+        <input type="number" id="plan-rooms" value="5">
+      </div>
+    </div>
     <div class="label">EK SİSTEMLER</div>
     <div class="toggle-row">
       <button class="toggle-btn" id="tog-ev" onclick="toggleOpt('ev')">🚗 EV Şarj</button>
@@ -270,17 +948,24 @@ textarea { resize: none; }
     <div id="plan-result"></div>
   </div>
 
-  <!-- MASTER WATT -->
+  <!-- ═══════════════ MASTER WATT ═══════════════ -->
   <div class="screen" id="screen-master-watt">
     <button class="back-btn" onclick="showScreen('master-home')">← Geri</button>
-    <div class="section-title">🔢 Watt & Devre Hesaplayıcı</div>
+    <div class="page-header">
+      <div class="page-header-icon blue">🔢</div>
+      <div>
+        <div class="page-header-title">Watt & Devre Hesaplayıcı</div>
+        <div class="page-header-sub">Kapasite kontrolü ve yönetmelik uyarıları</div>
+      </div>
+    </div>
+    <div class="label">ÜLKE STANDARDI</div>
     <div class="country-row" id="country-master-watt"></div>
     <div id="watt-list-m"></div>
-    <button class="btn btn-gray" onclick="addDeviceM()" style="margin-top:0">+ Cihaz Ekle</button>
+    <button class="btn btn-ghost" onclick="addDeviceM()" style="margin-top:0">+ Cihaz Ekle</button>
     <div id="watt-result-m" style="margin-top:16px"></div>
   </div>
 
-  <!-- MASTER REGS -->
+  <!-- ═══════════════ MASTER REGS ═══════════════ -->
   <div class="screen" id="screen-master-regs">
     <button class="back-btn" onclick="showScreen('master-home')">← Geri</button>
     <div class="section-title">📚 AB Yönetmelik Veritabanı</div>
@@ -312,6 +997,7 @@ let verifiedName = '';
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('screen-'+id).classList.add('active');
+  window.scrollTo(0,0);
   if(id==='customer-home') renderCountries('country-customer', false);
   if(id==='master-verify') renderCountries('country-verify', false);
   if(id==='master-ai') renderCountries('country-master-ai', true);
@@ -328,7 +1014,7 @@ function renderCountries(elId, isMaster) {
   const el = document.getElementById(elId);
   if(!el) return;
   el.innerHTML = Object.entries(REGS).map(([code,r])=>`
-    <button class="country-btn ${(isMaster?masterCountry:selectedCountry)===code?(isMaster?'active-blue':'active'):''}" 
+    <button class="country-btn ${(isMaster?masterCountry:selectedCountry)===code?(isMaster?'active-blue':'active'):''}"
     onclick="selectCountry('${code}',${isMaster},'${elId}')">${r.flag} ${code}</button>
   `).join('');
 }
@@ -347,8 +1033,8 @@ function renderWatt(mode) {
   const el = document.getElementById('watt-list-'+mode);
   el.innerHTML = devices.map((d,i)=>`
     <div class="watt-row">
-      <input type="text" value="${d.name}" onchange="updateDevice(${i},'name',this.value,'${mode}')">
-      <input type="number" value="${d.watt}" onchange="updateDevice(${i},'watt',this.value,'${mode}')">
+      <input type="text" value="${d.name}" placeholder="Cihaz adı" onchange="updateDevice(${i},'name',this.value,'${mode}')">
+      <input type="number" value="${d.watt}" placeholder="W" onchange="updateDevice(${i},'watt',this.value,'${mode}')">
       <button class="del-btn" onclick="removeDevice(${i},'${mode}')">×</button>
     </div>
   `).join('');
@@ -356,21 +1042,24 @@ function renderWatt(mode) {
   const max = 230*16;
   const pct = Math.min(total/max*100,100);
   const safe = total <= max*0.8;
+  const warn = total > max*0.8 && total <= max;
+  const over = total > max;
   const reg = REGS[country];
-  const resultEl = document.getElementById('watt-result-'+mode);
-  resultEl.innerHTML = `
-    <div style="background:rgba(255,255,255,0.03);border:1px solid ${safe?'rgba(0,255,136,0.2)':'rgba(255,68,68,0.3)'};border-radius:14px;padding:16px">
-      <div style="display:flex;justify-content:space-between;margin-bottom:8px">
-        <span style="color:#666;font-size:13px">Toplam / Max</span>
-        <span style="font-weight:900;color:${safe?'#00ff88':'#ef4444'}">${total}W / ${max}W</span>
+  const statusColor = over ? 'var(--red)' : warn ? '#fbbf24' : 'var(--green)';
+  const statusText = over ? '🔴 KRİTİK: Hat kapasitesi aşıldı!' : warn ? '🟡 UYARI: Kapasiteye çok yakın' : '✅ Güvenli — Hat kapasitesi yeterli';
+  const borderColor = over ? 'rgba(239,68,68,0.25)' : warn ? 'rgba(251,191,36,0.25)' : 'rgba(16,185,129,0.2)';
+
+  document.getElementById('watt-result-'+mode).innerHTML = `
+    <div style="background:var(--bg2);border:1px solid ${borderColor};border-radius:16px;padding:18px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <span style="color:var(--text3);font-size:12px">Toplam / Maksimum</span>
+        <span style="font-family:'Syne',sans-serif;font-weight:900;font-size:16px;color:${statusColor}">${total}W / ${max}W</span>
       </div>
-      <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${safe?'#00ff88':'#ef4444'}"></div></div>
-      ${total>max?'<div style="color:#ef4444;font-size:13px">🔴 KRİTİK: Hat kapasitesi aşıldı!</div>':''}
-      ${total>max*0.8&&total<=max?'<div style="color:#ffc800;font-size:13px">🟡 UYARI: Kapasiteye çok yakın</div>':''}
-      ${safe?'<div style="color:#00ff88;font-size:13px">✅ Güvenli — Hat kapasitesi yeterli</div>':''}
-      ${devices.filter(d=>d.watt>2000).map(d=>`<div style="color:#3b82f6;font-size:12px;margin-top:4px">⚡ ${d.name} (${d.watt}W) → Ayrı devre gerekli</div>`).join('')}
+      <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${statusColor}"></div></div>
+      <div style="color:${statusColor};font-size:12px;margin-top:10px;font-weight:700">${statusText}</div>
+      ${devices.filter(d=>d.watt>2000).map(d=>`<div style="color:var(--blue2);font-size:11px;margin-top:6px">⚡ ${d.name} (${d.watt}W) → Ayrı devre önerilir</div>`).join('')}
     </div>
-    <div class="info-box"><div class="info-title">📋 ${reg.flag} ${reg.std} MUTFAK KURALI</div>${reg.kitchen}</div>
+    <div class="info-box"><div class="info-title">📋 ${reg.flag} ${reg.std} — MUTFAK KURALI</div>${reg.kitchen}</div>
   `;
 }
 
@@ -393,8 +1082,9 @@ function renderRegs(mode) {
   if(titleEl) titleEl.textContent = r.flag+' '+r.name+' — '+r.std;
   const el = document.getElementById('regs-content-'+mode);
   el.innerHTML = `
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:4px 16px;margin-bottom:12px">
     ${[
-      ['Max priz/devre', r.maxSock+' adet'],
+      ['Max priz / devre', r.maxSock+' adet'],
       ['Aydınlatma kablosu', r.cables.light+'mm²'],
       ['Priz kablosu', r.cables.sock+'mm²'],
       ['Mutfak kablosu', r.cables.kitchen+'mm²'],
@@ -403,6 +1093,7 @@ function renderRegs(mode) {
       ['Genel RCD', r.rcd.gen+'mA'],
       ['Denetim kurumu', r.inspect],
     ].map(([k,v])=>`<div class="reg-row"><span class="reg-key">${k}</span><span class="reg-val">${v}</span></div>`).join('')}
+    </div>
     <div class="info-box"><div class="info-title">🍳 MUTFAK KURALI</div>${r.kitchen}</div>
     <div class="danger-box"><div class="danger-title">📋 YASAL NOT</div>${r.note}</div>
   `;
@@ -415,8 +1106,8 @@ function handleImage(mode, input) {
   reader.onload = e => {
     const b64 = e.target.result.split(',')[1];
     const url = e.target.result;
-    if(mode==='c') { imageB64_c=b64; document.getElementById('upload-c').innerHTML=`<img src="${url}">`; }
-    else { imageB64_m=b64; document.getElementById('upload-m').innerHTML=`<img src="${url}">`; }
+    if(mode==='c') { imageB64_c=b64; document.getElementById('upload-c').innerHTML=`<img src="${url}" style="max-height:160px;border-radius:10px">`; }
+    else { imageB64_m=b64; document.getElementById('upload-m').innerHTML=`<img src="${url}" style="max-height:160px;border-radius:10px">`; }
   };
   reader.readAsDataURL(file);
 }
@@ -438,18 +1129,39 @@ async function analyzeCustomer() {
   const text = document.getElementById('ai-input-c').value;
   if(!text && !imageB64_c) return;
   const reg = REGS[selectedCountry];
-  document.getElementById('result-c').innerHTML = '<div class="loading"><div class="spinner">⚡</div><br>Analiz ediliyor...</div>';
-  const prompt = `Sen bir elektrik uzmanısın. ${reg.std} standardına göre analiz et. Müşteri için sade dil kullan. Şunları ver: 1) Problemin sebebi 2) Tehlike var mı? 3) Kontrol edilecekler 4) Elektrikçiden istenecekler 5) Tahmini maliyet 6) Aciliyet: 🔴/🟡/🟢. Soru: ${text}`;
+  document.getElementById('result-c').innerHTML = `
+    <div class="loading">
+      <div class="spinner">⚡</div>
+      <div class="loading-text">AI analiz ediyor...</div>
+      <div class="loading-sub">${reg.flag} ${reg.std} standardına göre</div>
+    </div>`;
+  const prompt = `Sen bir elektrik uzmanısın. ${reg.std} standardına göre analiz et. Müşteri için sade Türkçe kullan. Şunları ver:
+
+1) ⚡ Problemin sebebi
+2) 🔴 Tehlike var mı?
+3) 🔍 Kontrol edilecekler
+4) 👷 Elektrikçiden istenecekler
+5) 💶 Tahmini maliyet
+6) 🚦 Aciliyet: 🔴 Acil / 🟡 Yakın takip / 🟢 Normal
+
+Soru: ${text}`;
   const result = await callAI(prompt, imageB64_c);
-  document.getElementById('result-c').innerHTML = `<div class="result-box">${result}</div><div class="warning-box">⚠️ Bu analiz bilgilendirme amaçlıdır. Elektrik işleri için mutlaka lisanslı elektrikçiye danışın.</div>`;
+  document.getElementById('result-c').innerHTML = `
+    <div class="result-box">${result}</div>
+    <div class="warning-box">⚠️ Bu analiz bilgilendirme amaçlıdır. Elektrik işleri için mutlaka lisanslı elektrikçiye danışın.</div>`;
 }
 
 async function analyzeMaster() {
   const text = document.getElementById('ai-input-m').value;
   if(!text && !imageB64_m) return;
   const reg = REGS[masterCountry];
-  document.getElementById('result-m').innerHTML = '<div class="loading"><div class="spinner">⚡</div><br>Analiz ediliyor...</div>';
-  const prompt = `Sen deneyimli bir elektrik mühendisisin. ${reg.std} standardına göre teknik destek ver. Lisanslı ustaya teknik dil kullan. Standartlar, kablo kesitleri, bağlantı şeması, güvenlik notları ver. Soru: ${text}`;
+  document.getElementById('result-m').innerHTML = `
+    <div class="loading">
+      <div class="spinner">⚡</div>
+      <div class="loading-text">Teknik analiz yapılıyor...</div>
+      <div class="loading-sub">${reg.flag} ${reg.std} standartları uygulanıyor</div>
+    </div>`;
+  const prompt = `Sen deneyimli bir elektrik mühendisisin. ${reg.std} standardına göre teknik destek ver. Lisanslı ustaya profesyonel teknik dil kullan. Standartlar, kablo kesitleri, bağlantı şeması önerileri, güvenlik notları ve yasal gereklilikler ver. Soru: ${text}`;
   const result = await callAI(prompt, imageB64_m);
   document.getElementById('result-m').innerHTML = `<div class="result-box">${result}</div>`;
 }
@@ -477,16 +1189,21 @@ function generatePlan() {
   if(opts.ac) circuits.push({name:'Klima Sistemi',cable:'4mm²',fuse:'20A',rcd:'300mA',color:'#06b6d4'});
 
   document.getElementById('plan-result').innerHTML = `
-    <div style="margin-top:16px">
-      <div style="font-size:14px;font-weight:800;color:#fff;margin-bottom:4px">${reg.flag} ${reg.std} — ${circuits.length} Devre</div>
-      <div style="font-size:11px;color:#555;margin-bottom:14px">${area}m² · ${rooms} oda</div>
+    <div style="margin-top:18px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div>
+          <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:900;color:var(--text)">${reg.flag} ${reg.std}</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">${area}m² · ${rooms} oda · ${circuits.length} devre</div>
+        </div>
+        <span class="chip amber">${circuits.length} Devre</span>
+      </div>
       ${circuits.map(c=>`
         <div class="plan-row" style="border-left:3px solid ${c.color}">
           <div><div class="plan-name">${c.name}</div><div class="plan-detail">Kablo: ${c.cable} · RCD: ${c.rcd}</div></div>
           <div class="plan-fuse" style="color:${c.color}">${c.fuse}</div>
         </div>
       `).join('')}
-      <div class="danger-box"><div class="danger-title">⚠️ YASAL UYARI</div>${reg.note} Uygulama sonrası ${reg.inspect} denetimi zorunludur.</div>
+      <div class="danger-box" style="margin-top:14px"><div class="danger-title">⚠️ YASAL UYARI</div>${reg.note} Uygulama sonrası ${reg.inspect} denetimi zorunludur.</div>
     </div>
   `;
 }
@@ -498,6 +1215,12 @@ function doVerify() {
   verifiedName = name;
   document.getElementById('verified-name').textContent = '✓ ' + name + ' · ' + REGS[masterCountry].flag + ' ' + REGS[masterCountry].std;
   showScreen('master-home');
+}
+
+// Language support (stub — extend as needed)
+function setLang(lang) {
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
 }
 
 // Init
