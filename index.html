@@ -1,1234 +1,725 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WattDone ⚡</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<title>WattDone — Smart Electrical Assistant</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #08090d;
-  --bg2: #0f1117;
-  --bg3: #151720;
-  --amber: #f59e0b;
-  --amber2: #fbbf24;
-  --blue: #3b82f6;
-  --blue2: #60a5fa;
-  --green: #10b981;
-  --red: #ef4444;
-  --purple: #8b5cf6;
-  --text: #f1f1f3;
-  --text2: #9ca3af;
-  --text3: #4b5563;
-  --border: rgba(255,255,255,0.07);
-  --border2: rgba(255,255,255,0.12);
-  --glow-amber: 0 0 30px rgba(245,158,11,0.15);
-  --glow-blue: 0 0 30px rgba(59,130,246,0.15);
+  --bg:#0a0b0f;--bg2:#111318;--bg3:#181b22;--bg4:#1e2130;
+  --amber:#e8a020;--amber2:#f5b942;--blue:#2d6be4;--blue2:#5b8ef0;
+  --green:#1a9e6e;--green2:#22c98a;--red:#d94040;--red2:#f06060;
+  --text:#ecedf0;--text2:#8b909e;--text3:#454a59;
+  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.11);
 }
-* { margin:0; padding:0; box-sizing:border-box; }
-
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'DM Sans', sans-serif;
-  min-height: 100vh;
-  overflow-x: hidden;
-}
-
-/* Ambient background */
-body::before {
-  content:'';
-  position:fixed;
-  top:-200px; left:-200px;
-  width:600px; height:600px;
-  background: radial-gradient(circle, rgba(245,158,11,0.04) 0%, transparent 70%);
-  pointer-events:none;
-  z-index:0;
-}
-body::after {
-  content:'';
-  position:fixed;
-  bottom:-200px; right:-200px;
-  width:600px; height:600px;
-  background: radial-gradient(circle, rgba(59,130,246,0.04) 0%, transparent 70%);
-  pointer-events:none;
-  z-index:0;
-}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:0.4;}
+.glow-tl{position:fixed;top:-300px;left:-300px;width:700px;height:700px;background:radial-gradient(circle,rgba(232,160,32,0.05) 0%,transparent 65%);pointer-events:none;z-index:0;}
+.glow-br{position:fixed;bottom:-300px;right:-300px;width:700px;height:700px;background:radial-gradient(circle,rgba(45,107,228,0.05) 0%,transparent 65%);pointer-events:none;z-index:0;}
 
 /* TOPBAR */
-.topbar {
-  position: sticky;
-  top:0;
-  z-index: 100;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 14px 20px;
-  background: rgba(8,9,13,0.85);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--border);
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  font-family: 'Syne', sans-serif;
-  font-weight: 900;
-  font-size: 20px;
-  letter-spacing: -0.5px;
-}
-.logo-bolt {
-  width: 32px; height: 32px;
-  background: linear-gradient(135deg, #f59e0b, #f97316);
-  border-radius: 8px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 16px;
-  box-shadow: 0 0 16px rgba(245,158,11,0.4);
-}
-.logo span { color: var(--amber); }
-.badge-v {
-  background: linear-gradient(135deg, var(--amber), #f97316);
-  color: #000;
-  font-size: 9px;
-  padding: 2px 7px;
-  border-radius: 20px;
-  font-weight: 800;
-  font-family: 'DM Sans', sans-serif;
-  letter-spacing: 0.5px;
-}
-
-.langs {
-  display: flex;
-  gap: 2px;
-  background: var(--bg3);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 4px;
-}
-.lang-btn {
-  background: transparent;
-  border: none;
-  font-size: 15px;
-  cursor: pointer;
-  padding: 4px 6px;
-  border-radius: 8px;
-  transition: background 0.15s;
-  line-height: 1;
-}
-.lang-btn.active { background: rgba(255,255,255,0.12); }
+.topbar{position:sticky;top:0;z-index:200;display:flex;justify-content:space-between;align-items:center;padding:13px 20px;background:rgba(10,11,15,0.92);backdrop-filter:blur(24px);border-bottom:1px solid var(--border);}
+.logo{display:flex;align-items:center;gap:10px;cursor:pointer;font-family:'Playfair Display',serif;font-weight:900;font-size:19px;color:var(--text);letter-spacing:-0.3px;}
+.logo-mark{width:34px;height:34px;background:linear-gradient(140deg,#e8a020,#c9973a);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;font-family:sans-serif;box-shadow:0 0 20px rgba(232,160,32,0.3),inset 0 1px 0 rgba(255,255,255,0.15);}
+.logo-done{color:var(--amber);}
+.logo-badge{font-family:'Outfit',sans-serif;font-size:9px;font-weight:700;background:var(--bg3);border:1px solid var(--border2);color:var(--text2);padding:2px 7px;border-radius:20px;letter-spacing:1px;}
+.current-lang{font-size:11px;color:var(--text3);font-weight:500;background:var(--bg3);border:1px solid var(--border);padding:5px 10px;border-radius:8px;cursor:pointer;transition:all 0.15s;}
+.current-lang:hover{border-color:var(--border2);color:var(--text2);}
 
 /* CONTAINER */
-.container { max-width: 520px; margin: 0 auto; padding: 0 18px 60px; position:relative; z-index:1; }
-.screen { display: none; padding-top: 28px; }
-.screen.active { display: block; animation: fadeUp 0.3s ease; }
+.container{max-width:540px;margin:0 auto;padding:0 18px 80px;position:relative;z-index:1;}
+.screen{display:none;padding-top:28px;}
+.screen.active{display:block;animation:fadeIn 0.28s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
-@keyframes fadeUp {
-  from { opacity:0; transform: translateY(12px); }
-  to   { opacity:1; transform: translateY(0); }
-}
+/* LANG SCREEN */
+.lang-screen{min-height:calc(100vh - 60px);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 20px;}
+.lang-icon{width:80px;height:80px;background:linear-gradient(140deg,rgba(232,160,32,0.15),rgba(201,151,58,0.08));border:1px solid rgba(232,160,32,0.25);border-radius:22px;display:flex;align-items:center;justify-content:center;font-size:38px;margin:0 auto 24px;box-shadow:0 0 50px rgba(232,160,32,0.1);animation:breathe 4s ease-in-out infinite;}
+@keyframes breathe{0%,100%{box-shadow:0 0 30px rgba(232,160,32,0.1)}50%{box-shadow:0 0 70px rgba(232,160,32,0.2)}}
+.lang-title{font-family:'Playfair Display',serif;font-size:28px;font-weight:900;color:var(--text);line-height:1.2;margin-bottom:8px;letter-spacing:-0.5px;}
+.lang-desc{font-size:13px;color:var(--text3);margin-bottom:36px;}
+.lang-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:380px;}
+.lang-opt{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:16px 14px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:12px;text-align:left;}
+.lang-opt:hover{border-color:rgba(232,160,32,0.35);background:rgba(232,160,32,0.04);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.3);}
+.lang-flag{font-size:26px;line-height:1;}
+.lang-name{font-weight:700;font-size:14px;color:var(--text);}
+.lang-native{font-size:11px;color:var(--text3);margin-top:1px;}
+.full-width{grid-column:1/-1;}
 
-/* HOME HERO */
-.hero {
-  text-align: center;
-  padding: 40px 0 32px;
-  position: relative;
-}
-.hero-glow {
-  position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%,-50%);
-  width: 300px; height: 300px;
-  background: radial-gradient(circle, rgba(245,158,11,0.08) 0%, transparent 70%);
-  pointer-events: none;
-}
-.hero-bolt {
-  width: 72px; height: 72px;
-  background: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(249,115,22,0.15));
-  border: 1px solid rgba(245,158,11,0.3);
-  border-radius: 20px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 34px;
-  margin: 0 auto 20px;
-  box-shadow: 0 0 40px rgba(245,158,11,0.12);
-  animation: pulse-bolt 3s ease-in-out infinite;
-}
-@keyframes pulse-bolt {
-  0%,100% { box-shadow: 0 0 20px rgba(245,158,11,0.12); }
-  50%      { box-shadow: 0 0 50px rgba(245,158,11,0.25); }
-}
+/* HOME */
+.home-hero{padding:36px 0 28px;text-align:center;position:relative;}
+.home-bolt{width:68px;height:68px;background:linear-gradient(140deg,rgba(232,160,32,0.12),rgba(201,151,58,0.06));border:1px solid rgba(232,160,32,0.22);border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 20px;animation:breathe 4s ease-in-out infinite;}
+.home-title{font-family:'Playfair Display',serif;font-size:26px;font-weight:900;color:var(--text);line-height:1.25;letter-spacing:-0.5px;margin-bottom:10px;}
+.home-title em{font-style:normal;color:var(--amber);}
+.home-sub{font-size:12px;color:var(--text3);letter-spacing:2.5px;text-transform:uppercase;font-weight:500;margin-bottom:14px;}
+.country-chips{display:flex;justify-content:center;gap:5px;flex-wrap:wrap;}
+.country-chip{font-size:10px;color:var(--text3);font-weight:600;background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:3px 8px;letter-spacing:0.5px;}
 
-.hero-title {
-  font-family: 'Syne', sans-serif;
-  font-size: 26px;
-  font-weight: 900;
-  color: var(--text);
-  margin-bottom: 8px;
-  line-height: 1.25;
-  letter-spacing: -0.5px;
-}
-.hero-title span { color: var(--amber); }
+/* SECTION LABEL */
+.section-label{font-size:10px;color:var(--text3);font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;padding-left:2px;}
 
-.hero-sub {
-  font-size: 12px;
-  color: var(--text3);
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  font-weight: 500;
-  margin-top: 10px;
-}
-
-.country-dots {
-  display: flex;
-  justify-content: center;
-  gap: 6px;
-  margin-top: 14px;
-  flex-wrap: wrap;
-}
-.country-dot {
-  background: var(--bg3);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 4px 10px;
-  font-size: 11px;
-  color: var(--text3);
-  font-weight: 600;
-}
+/* COUNTRY GRID */
+.country-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:24px;}
+.country-card{background:var(--bg2);border:1px solid var(--border);border-radius:13px;padding:12px 10px;cursor:pointer;text-align:center;transition:all 0.18s;}
+.country-card:hover{border-color:var(--border2);transform:translateY(-1px);}
+.country-card.active{border-color:rgba(232,160,32,0.4);background:rgba(232,160,32,0.06);}
+.cc-flag{font-size:22px;line-height:1;margin-bottom:5px;}
+.cc-code{font-size:11px;font-weight:700;color:var(--text);}
+.cc-std{font-size:9px;color:var(--text3);margin-top:2px;}
 
 /* MODE CARDS */
-.mode-cards { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
-
-.mode-card {
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 20px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  transition: all 0.2s;
-  position: relative;
-  overflow: hidden;
-}
-.mode-card::before {
-  content:'';
-  position:absolute;
-  inset:0;
-  opacity:0;
-  transition: opacity 0.2s;
-}
-.mode-card.customer::before { background: linear-gradient(135deg, rgba(245,158,11,0.04), transparent); }
-.mode-card.master::before { background: linear-gradient(135deg, rgba(59,130,246,0.04), transparent); }
-.mode-card:hover { transform: translateY(-2px); }
-.mode-card.customer:hover { border-color: rgba(245,158,11,0.3); box-shadow: var(--glow-amber); }
-.mode-card.customer:hover::before { opacity:1; }
-.mode-card.master:hover { border-color: rgba(59,130,246,0.3); box-shadow: var(--glow-blue); }
-.mode-card.master:hover::before { opacity:1; }
-
-.mode-icon {
-  width: 52px; height: 52px;
-  border-radius: 14px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 24px;
-  flex-shrink: 0;
-}
-.mode-icon.c { background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.2); }
-.mode-icon.m { background: rgba(59,130,246,0.12); border: 1px solid rgba(59,130,246,0.2); }
-
-.mode-info { flex: 1; }
-.mode-label {
-  font-family: 'Syne', sans-serif;
-  font-weight: 800;
-  font-size: 16px;
-  color: var(--text);
-  margin-bottom: 4px;
-}
-.mode-sub { font-size: 12px; color: var(--text3); line-height: 1.4; }
-
-.mode-arrow {
-  width: 32px; height: 32px;
-  border-radius: 10px;
-  background: var(--bg3);
-  border: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: center;
-  color: var(--text3);
-  font-size: 16px;
-  flex-shrink: 0;
-  transition: all 0.2s;
-}
-.mode-card:hover .mode-arrow { background: var(--border2); color: var(--text); }
+.mode-cards{display:flex;flex-direction:column;gap:10px;margin-bottom:22px;}
+.mode-card{background:var(--bg2);border:1px solid var(--border);border-radius:18px;padding:18px 16px;cursor:pointer;display:flex;align-items:center;gap:14px;transition:all 0.2s;position:relative;overflow:hidden;}
+.mode-card::after{content:'';position:absolute;inset:0;opacity:0;transition:opacity 0.2s;}
+.mode-card.customer::after{background:linear-gradient(120deg,rgba(232,160,32,0.04) 0%,transparent 60%);}
+.mode-card.master::after{background:linear-gradient(120deg,rgba(45,107,228,0.05) 0%,transparent 60%);}
+.mode-card:hover{transform:translateY(-2px);}
+.mode-card.customer:hover{border-color:rgba(232,160,32,0.28);box-shadow:0 8px 32px rgba(232,160,32,0.08);}
+.mode-card.customer:hover::after{opacity:1;}
+.mode-card.master:hover{border-color:rgba(45,107,228,0.28);box-shadow:0 8px 32px rgba(45,107,228,0.08);}
+.mode-card.master:hover::after{opacity:1;}
+.mode-icon{width:50px;height:50px;border-radius:14px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:22px;}
+.mode-icon.c{background:rgba(232,160,32,0.1);border:1px solid rgba(232,160,32,0.18);}
+.mode-icon.m{background:rgba(45,107,228,0.1);border:1px solid rgba(45,107,228,0.18);}
+.mode-label{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--text);margin-bottom:3px;}
+.mode-sub{font-size:11px;color:var(--text3);line-height:1.4;}
+.mode-arr{width:30px;height:30px;flex-shrink:0;background:var(--bg3);border:1px solid var(--border);border-radius:9px;display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:15px;transition:all 0.2s;}
+.mode-card:hover .mode-arr{background:var(--bg4);color:var(--text);}
 
 /* STATS */
-.stats {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 10px;
-}
-.stat {
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 16px 12px;
-  text-align: center;
-  transition: border 0.2s;
-}
-.stat:hover { border-color: var(--border2); }
-.stat-v {
-  font-family: 'Syne', sans-serif;
-  font-size: 22px;
-  font-weight: 900;
-  color: var(--amber);
-  line-height: 1;
-}
-.stat-l { font-size: 10px; color: var(--text3); margin-top: 5px; letter-spacing: 0.5px; }
+.stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+.stat{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:14px 10px;text-align:center;transition:border 0.2s;}
+.stat:hover{border-color:var(--border2);}
+.stat-v{font-family:'Playfair Display',serif;font-size:20px;font-weight:900;color:var(--amber);line-height:1;}
+.stat-l{font-size:9px;color:var(--text3);margin-top:5px;letter-spacing:1px;text-transform:uppercase;}
 
-/* BACK BTN */
-.back-btn {
-  background: var(--bg3);
-  border: 1px solid var(--border);
-  color: var(--text2);
-  cursor: pointer;
-  font-size: 12px;
-  padding: 7px 14px;
-  margin-bottom: 20px;
-  border-radius: 10px;
-  font-family: 'DM Sans', sans-serif;
-  font-weight: 500;
-  transition: all 0.15s;
-  display: inline-flex; align-items: center; gap: 6px;
-}
-.back-btn:hover { border-color: var(--border2); color: var(--text); }
+/* INNER */
+.back-btn{display:inline-flex;align-items:center;gap:6px;background:var(--bg3);border:1px solid var(--border);color:var(--text2);cursor:pointer;font-size:11px;font-weight:600;font-family:'Outfit',sans-serif;padding:7px 14px;border-radius:9px;margin-bottom:20px;transition:all 0.15s;letter-spacing:0.3px;}
+.back-btn:hover{border-color:var(--border2);color:var(--text);}
+.page-header{background:var(--bg2);border:1px solid var(--border);border-radius:18px;padding:18px;margin-bottom:20px;display:flex;align-items:center;gap:14px;}
+.phi{width:48px;height:48px;border-radius:13px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:22px;}
+.phi.a{background:rgba(232,160,32,0.1);border:1px solid rgba(232,160,32,0.2);}
+.phi.b{background:rgba(45,107,228,0.1);border:1px solid rgba(45,107,228,0.18);}
+.phi.g{background:rgba(26,158,110,0.1);border:1px solid rgba(26,158,110,0.18);}
+.ph-title{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--text);}
+.ph-sub{font-size:11px;color:var(--text3);margin-top:3px;}
+.section-title{font-family:'Playfair Display',serif;font-size:19px;font-weight:900;color:var(--text);margin-bottom:16px;letter-spacing:-0.3px;}
+.lbl{font-size:9px;color:var(--text3);font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;padding-left:2px;}
 
-/* SECTION TITLE */
-.section-title {
-  font-family: 'Syne', sans-serif;
-  font-size: 20px;
-  font-weight: 900;
-  color: var(--text);
-  margin-bottom: 18px;
-  letter-spacing: -0.3px;
-}
+/* MENU */
+.menu-card{background:var(--bg2);border:1px solid var(--border);border-radius:15px;padding:15px;margin-bottom:9px;cursor:pointer;display:flex;align-items:center;gap:13px;transition:all 0.2s;}
+.menu-card:hover{border-color:rgba(45,107,228,0.3);transform:translateX(3px);}
+.menu-card.a:hover{border-color:rgba(232,160,32,0.3);}
+.menu-icon{width:44px;height:44px;border-radius:12px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:20px;}
+.mi-b{background:rgba(45,107,228,0.09);border:1px solid rgba(45,107,228,0.15);}
+.mi-a{background:rgba(232,160,32,0.09);border:1px solid rgba(232,160,32,0.15);}
+.mi-g{background:rgba(26,158,110,0.09);border:1px solid rgba(26,158,110,0.15);}
+.menu-label{font-weight:700;font-size:13px;color:var(--text);}
+.menu-sub{font-size:11px;color:var(--text3);margin-top:2px;}
 
-/* PAGE HEADER */
-.page-header {
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  padding: 18px 18px 16px;
-  margin-bottom: 20px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-.page-header-icon {
-  width: 46px; height: 46px;
-  border-radius: 13px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 22px;
-  flex-shrink: 0;
-}
-.page-header-icon.amber { background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.2); }
-.page-header-icon.blue { background: rgba(59,130,246,0.12); border: 1px solid rgba(59,130,246,0.2); }
-.page-header-title {
-  font-family: 'Syne', sans-serif;
-  font-size: 17px; font-weight: 800;
-  color: var(--text);
-}
-.page-header-sub { font-size: 11px; color: var(--text3); margin-top: 3px; }
-
-/* LABEL */
-.label {
-  font-size: 10px;
-  color: var(--text3);
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  font-weight: 700;
-  margin-bottom: 8px;
-}
-
-/* COUNTRY SELECTOR */
-.country-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 18px; }
-.country-btn {
-  background: var(--bg3);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 7px 14px;
-  cursor: pointer;
-  font-weight: 700;
-  font-size: 12px;
-  color: var(--text3);
-  transition: all 0.15s;
-  font-family: 'DM Sans', sans-serif;
-}
-.country-btn:hover { border-color: var(--border2); color: var(--text2); }
-.country-btn.active { background: rgba(245,158,11,0.12); border-color: rgba(245,158,11,0.4); color: var(--amber); }
-.country-btn.active-blue { background: rgba(59,130,246,0.12); border-color: rgba(59,130,246,0.4); color: var(--blue2); }
-
-/* MENU CARDS */
-.menu-card {
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 16px;
-  margin-bottom: 10px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  transition: all 0.2s;
-  position: relative;
-  overflow: hidden;
-}
-.menu-card:hover { border-color: rgba(59,130,246,0.3); transform: translateX(3px); box-shadow: var(--glow-blue); }
-.menu-card.amber:hover { border-color: rgba(245,158,11,0.3); box-shadow: var(--glow-amber); }
-.menu-icon {
-  width: 46px; height: 46px;
-  border-radius: 13px;
-  background: rgba(59,130,246,0.1);
-  border: 1px solid rgba(59,130,246,0.15);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 20px;
-  flex-shrink: 0;
-}
-.menu-icon.amber { background: rgba(245,158,11,0.1); border-color: rgba(245,158,11,0.15); }
-.menu-label { font-weight: 700; font-size: 14px; color: var(--text); font-family: 'Syne', sans-serif; }
-.menu-sub { font-size: 11px; color: var(--text3); margin-top: 3px; }
-
-/* FORM ELEMENTS */
-textarea, input[type=text], input[type=number] {
-  width: 100%;
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: 13px;
-  padding: 13px 16px;
-  color: var(--text);
-  font-size: 14px;
-  font-family: 'DM Sans', sans-serif;
-  outline: none;
-  transition: border 0.2s, box-shadow 0.2s;
-}
-textarea:focus, input:focus {
-  border-color: rgba(245,158,11,0.4);
-  box-shadow: 0 0 0 3px rgba(245,158,11,0.06);
-}
-textarea { resize: none; }
-::placeholder { color: var(--text3); }
+/* FORMS */
+textarea,input[type=text],input[type=number]{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:12px 15px;color:var(--text);font-size:13px;font-family:'Outfit',sans-serif;outline:none;transition:border 0.2s,box-shadow 0.2s;}
+textarea:focus,input:focus{border-color:rgba(232,160,32,0.35);box-shadow:0 0 0 3px rgba(232,160,32,0.05);}
+textarea{resize:none;}
+::placeholder{color:var(--text3);}
 
 /* BUTTONS */
-.btn {
-  width: 100%;
-  padding: 15px;
-  border: none;
-  border-radius: 13px;
-  font-size: 14px;
-  font-weight: 800;
-  cursor: pointer;
-  margin-top: 12px;
-  transition: all 0.2s;
-  font-family: 'Syne', sans-serif;
-  letter-spacing: 0.3px;
-  display: flex; align-items: center; justify-content: center; gap: 8px;
-}
-.btn-amber {
-  background: linear-gradient(135deg, #f59e0b, #f97316);
-  color: #000;
-  box-shadow: 0 4px 20px rgba(245,158,11,0.25);
-}
-.btn-amber:hover { transform: translateY(-1px); box-shadow: 0 8px 30px rgba(245,158,11,0.35); }
-.btn-blue {
-  background: linear-gradient(135deg, #3b82f6, #6366f1);
-  color: #fff;
-  box-shadow: 0 4px 20px rgba(59,130,246,0.25);
-}
-.btn-blue:hover { transform: translateY(-1px); box-shadow: 0 8px 30px rgba(59,130,246,0.35); }
-.btn-ghost {
-  background: var(--bg3);
-  border: 1px solid var(--border);
-  color: var(--text2);
-}
-.btn-ghost:hover { border-color: var(--border2); color: var(--text); }
-.btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; }
-.btn:active { transform: translateY(1px) !important; }
+.btn{width:100%;padding:14px 18px;border:none;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;margin-top:10px;transition:all 0.2s;font-family:'Outfit',sans-serif;letter-spacing:0.4px;display:flex;align-items:center;justify-content:center;gap:8px;}
+.btn-amber{background:linear-gradient(135deg,#e8a020,#c9973a);color:#000;box-shadow:0 4px 18px rgba(232,160,32,0.22);}
+.btn-amber:hover{transform:translateY(-1px);box-shadow:0 8px 28px rgba(232,160,32,0.32);}
+.btn-blue{background:linear-gradient(135deg,#2d6be4,#4a5be8);color:#fff;box-shadow:0 4px 18px rgba(45,107,228,0.22);}
+.btn-blue:hover{transform:translateY(-1px);box-shadow:0 8px 28px rgba(45,107,228,0.32);}
+.btn-green{background:linear-gradient(135deg,#1a9e6e,#16b87f);color:#fff;box-shadow:0 4px 18px rgba(26,158,110,0.2);}
+.btn-green:hover{transform:translateY(-1px);}
+.btn-ghost{background:var(--bg3);border:1px solid var(--border);color:var(--text2);}
+.btn-ghost:hover{border-color:var(--border2);color:var(--text);}
+.btn:active{transform:translateY(1px)!important;}
 
-/* RESULT BOX */
-.result-box {
-  background: var(--bg2);
-  border: 1px solid rgba(245,158,11,0.2);
-  border-radius: 16px;
-  padding: 20px;
-  margin-top: 16px;
-  font-size: 13px;
-  line-height: 1.9;
-  color: var(--text2);
-  white-space: pre-wrap;
-  position: relative;
-}
-.result-box::before {
-  content: 'AI ANALİZ SONUCU';
-  font-size: 9px;
-  color: var(--amber);
-  letter-spacing: 2px;
-  font-weight: 800;
-  display: block;
-  margin-bottom: 12px;
-  font-family: 'DM Sans', sans-serif;
-}
+/* RESULTS */
+.result-box{background:var(--bg2);border:1px solid rgba(232,160,32,0.18);border-radius:15px;padding:18px;margin-top:14px;font-size:13px;line-height:1.85;color:var(--text2);white-space:pre-wrap;}
+.result-label{font-size:9px;color:var(--amber);letter-spacing:2px;font-weight:700;text-transform:uppercase;margin-bottom:12px;display:block;font-family:'Outfit',sans-serif;}
+.warning-box{background:rgba(232,160,32,0.04);border:1px solid rgba(232,160,32,0.12);border-radius:11px;padding:12px 14px;font-size:11px;color:var(--text3);margin-top:10px;line-height:1.6;}
+.info-box{background:rgba(45,107,228,0.04);border:1px solid rgba(45,107,228,0.12);border-radius:11px;padding:13px 14px;font-size:11px;color:var(--text3);margin-top:10px;line-height:1.6;}
+.danger-box{background:rgba(217,64,64,0.04);border:1px solid rgba(217,64,64,0.12);border-radius:11px;padding:13px 14px;font-size:11px;color:var(--text3);margin-top:10px;line-height:1.6;}
+.box-title{font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:5px;font-family:'Outfit',sans-serif;}
+.bt-a{color:var(--amber2);}
+.bt-b{color:var(--blue2);}
+.bt-r{color:var(--red2);}
 
-/* INFO BOXES */
-.warning-box {
-  background: rgba(245,158,11,0.05);
-  border: 1px solid rgba(245,158,11,0.15);
-  border-radius: 12px;
-  padding: 12px 16px;
-  font-size: 11px;
-  color: var(--text3);
-  margin-top: 12px;
-  line-height: 1.6;
-  display: flex; gap: 8px; align-items: flex-start;
-}
-.info-box {
-  background: rgba(59,130,246,0.05);
-  border: 1px solid rgba(59,130,246,0.15);
-  border-radius: 12px;
-  padding: 14px 16px;
-  font-size: 12px;
-  color: var(--text3);
-  margin-top: 12px;
-  line-height: 1.6;
-}
-.info-title { font-size: 10px; color: var(--blue2); font-weight: 800; margin-bottom: 6px; letter-spacing: 1px; font-family: 'DM Sans', sans-serif; }
-.danger-box {
-  background: rgba(239,68,68,0.05);
-  border: 1px solid rgba(239,68,68,0.15);
-  border-radius: 12px;
-  padding: 14px 16px;
-  font-size: 12px;
-  color: var(--text3);
-  margin-top: 12px;
-  line-height: 1.6;
-}
-.danger-title { font-size: 10px; color: #ef4444; font-weight: 800; margin-bottom: 6px; letter-spacing: 1px; font-family: 'DM Sans', sans-serif; }
-
-/* REG TABLE */
-.reg-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 0;
-  border-bottom: 1px solid var(--border);
-}
-.reg-key { font-size: 12px; color: var(--text3); }
-.reg-val { font-size: 13px; font-weight: 700; color: var(--text); }
+/* REG */
+.reg-table{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:4px 16px;margin-bottom:10px;}
+.reg-row{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--border);}
+.reg-row:last-child{border-bottom:none;}
+.reg-key{font-size:12px;color:var(--text3);}
+.reg-val{font-size:12px;font-weight:700;color:var(--text);}
 
 /* WATT */
-.watt-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
-.watt-row input[type=text] { flex: 1; }
-.watt-row input[type=number] { width: 90px; }
-.del-btn {
-  background: rgba(239,68,68,0.1);
-  border: 1px solid rgba(239,68,68,0.2);
-  border-radius: 10px;
-  padding: 0 12px;
-  height: 46px;
-  color: #ef4444;
-  cursor: pointer;
-  font-size: 18px;
-  transition: all 0.15s;
-  flex-shrink: 0;
-}
-.del-btn:hover { background: rgba(239,68,68,0.2); }
+.watt-row{display:flex;gap:8px;margin-bottom:8px;align-items:center;}
+.watt-row input[type=text]{flex:1;}
+.watt-row input[type=number]{width:90px;}
+.del-btn{background:rgba(217,64,64,0.08);border:1px solid rgba(217,64,64,0.15);border-radius:10px;padding:0 12px;height:44px;color:var(--red2);cursor:pointer;font-size:17px;transition:all 0.15s;flex-shrink:0;}
+.del-btn:hover{background:rgba(217,64,64,0.16);}
+.progress-bar{background:var(--bg3);border-radius:4px;height:5px;margin:10px 0;overflow:hidden;}
+.progress-fill{height:5px;border-radius:4px;transition:width 0.6s cubic-bezier(0.34,1.56,0.64,1);}
 
-.progress-bar {
-  background: var(--bg3);
-  border-radius: 6px;
-  height: 6px;
-  margin: 10px 0;
-  overflow: hidden;
-}
-.progress-fill {
-  height: 6px;
-  border-radius: 6px;
-  transition: width 0.6s cubic-bezier(0.34,1.56,0.64,1);
-}
-
-/* PLAN ROWS */
-.plan-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 13px 16px;
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  margin-bottom: 8px;
-  transition: border 0.2s;
-}
-.plan-row:hover { border-color: var(--border2); }
-.plan-name { font-size: 13px; font-weight: 700; color: var(--text); }
-.plan-detail { font-size: 10px; color: var(--text3); margin-top: 3px; letter-spacing: 0.3px; }
-.plan-fuse { font-size: 13px; font-weight: 900; font-family: 'Syne', sans-serif; }
+/* PLAN */
+.plan-row{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:11px;margin-bottom:7px;transition:border 0.15s;}
+.plan-row:hover{border-color:var(--border2);}
+.plan-name{font-size:12px;font-weight:700;color:var(--text);}
+.plan-detail{font-size:10px;color:var(--text3);margin-top:2px;}
+.plan-fuse{font-family:'Playfair Display',serif;font-size:14px;font-weight:700;}
 
 /* UPLOAD */
-.upload-area {
-  border: 1.5px dashed rgba(255,255,255,0.1);
-  border-radius: 14px;
-  padding: 20px;
-  text-align: center;
-  cursor: pointer;
-  margin-bottom: 12px;
-  transition: all 0.2s;
-  background: var(--bg2);
-}
-.upload-area:hover { border-color: rgba(245,158,11,0.3); background: rgba(245,158,11,0.03); }
-.upload-area img { max-height: 160px; border-radius: 10px; }
-.upload-icon { font-size: 28px; margin-bottom: 8px; }
-.upload-text { font-size: 12px; color: var(--text3); }
-.upload-hint { font-size: 10px; color: var(--text3); margin-top: 4px; opacity: 0.6; }
+.upload-area{border:1.5px dashed rgba(255,255,255,0.08);border-radius:13px;padding:20px;text-align:center;cursor:pointer;margin-bottom:12px;transition:all 0.2s;background:var(--bg2);}
+.upload-area:hover{border-color:rgba(232,160,32,0.28);background:rgba(232,160,32,0.02);}
+.upload-area img{max-height:150px;border-radius:9px;}
+.upload-icon{font-size:26px;margin-bottom:7px;}
+.upload-text{font-size:12px;color:var(--text3);}
+.upload-hint{font-size:10px;color:var(--text3);margin-top:3px;opacity:0.5;}
 
 /* LOADING */
-.loading {
-  text-align: center;
-  padding: 50px 20px;
-  color: var(--text3);
-  font-size: 13px;
-}
-.spinner { font-size: 40px; display: inline-block; animation: spin 1.2s linear infinite; }
-@keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
-.loading-text { margin-top: 16px; font-size: 12px; color: var(--text3); }
-.loading-sub { font-size: 10px; color: var(--text3); opacity: 0.5; margin-top: 6px; }
+.loading{text-align:center;padding:50px 20px;}
+.spinner{font-size:38px;display:inline-block;animation:spin 1.2s linear infinite;}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.loading-text{margin-top:14px;font-size:12px;color:var(--text3);}
+.loading-sub{font-size:10px;color:var(--text3);opacity:0.4;margin-top:5px;}
 
-/* TOGGLES */
-.toggle-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
-.toggle-btn {
-  background: var(--bg3);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 9px 16px;
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--text3);
-  transition: all 0.15s;
-  font-family: 'DM Sans', sans-serif;
-}
-.toggle-btn:hover { border-color: var(--border2); color: var(--text2); }
-.toggle-btn.on { background: rgba(59,130,246,0.12); border-color: rgba(59,130,246,0.35); color: var(--blue2); }
+/* TOGGLE */
+.toggle-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.toggle-btn{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:9px 14px;cursor:pointer;font-size:11px;font-weight:700;color:var(--text3);transition:all 0.15s;font-family:'Outfit',sans-serif;}
+.toggle-btn:hover{border-color:var(--border2);color:var(--text2);}
+.toggle-btn.on{background:rgba(45,107,228,0.1);border-color:rgba(45,107,228,0.3);color:var(--blue2);}
 
-/* VERIFY FORM */
-.verify-form input { margin-bottom: 12px; }
+/* VERIFIED */
+.verified-badge{display:inline-flex;align-items:center;gap:5px;font-size:10px;color:var(--blue2);background:rgba(45,107,228,0.08);border:1px solid rgba(45,107,228,0.18);border-radius:7px;padding:3px 10px;margin-top:4px;}
+.master-header{display:flex;justify-content:space-between;align-items:flex-start;background:var(--bg2);border:1px solid var(--border);border-radius:18px;padding:18px;margin-bottom:20px;}
 
-/* VERIFIED BADGE */
-.verified-badge {
-  display: inline-flex; align-items: center; gap: 5px;
-  font-size: 11px; color: var(--blue2);
-  background: rgba(59,130,246,0.1);
-  border: 1px solid rgba(59,130,246,0.2);
-  border-radius: 8px;
-  padding: 3px 10px;
-  margin-top: 4px;
-}
+/* KW */
+.kw-big{font-family:'Playfair Display',serif;font-size:36px;font-weight:900;color:var(--amber);line-height:1;}
+.kw-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;}
+.kw-cell{background:var(--bg3);border-radius:10px;padding:12px;}
+.kw-cell-label{font-size:9px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;}
+.kw-cell-value{font-size:15px;font-weight:700;color:var(--text);}
 
-/* MASTER HEADER */
-.master-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 20px;
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  padding: 18px;
-}
-.master-header-info .section-title { margin-bottom: 4px; }
+/* PRO */
+.pro-coming{background:linear-gradient(135deg,rgba(45,107,228,0.08),rgba(74,91,232,0.05));border:1px solid rgba(45,107,228,0.2);border-radius:14px;padding:16px;text-align:center;margin-top:12px;}
+.pro-title{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.pro-sub{font-size:11px;color:var(--text3);margin-bottom:10px;}
+.pro-price{font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:var(--blue2);}
 
-/* WATT SUMMARY CARD */
-.watt-summary {
-  background: var(--bg2);
-  border-radius: 16px;
-  padding: 18px;
-}
-.watt-summary-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-}
-.watt-label { font-size: 12px; color: var(--text3); }
-.watt-value { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 900; }
+/* PDF BTN */
+.pdf-btn{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;padding:12px;background:var(--bg3);border:1px solid var(--border);border-radius:11px;cursor:pointer;font-size:12px;font-weight:700;color:var(--text2);font-family:'Outfit',sans-serif;transition:all 0.15s;margin-top:8px;}
+.pdf-btn:hover{border-color:rgba(26,158,110,0.3);color:var(--green2);}
 
-/* DIVIDER */
-.divider {
-  height: 1px;
-  background: var(--border);
-  margin: 20px 0;
-}
+/* CHIPS */
+.chip{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;letter-spacing:0.3px;border-radius:7px;padding:3px 9px;}
+.chip-a{background:rgba(232,160,32,0.1);border:1px solid rgba(232,160,32,0.2);color:var(--amber);}
+.chip-b{background:rgba(45,107,228,0.1);border:1px solid rgba(45,107,228,0.2);color:var(--blue2);}
+.chip-g{background:rgba(26,158,110,0.1);border:1px solid rgba(26,158,110,0.2);color:var(--green2);}
 
-/* CHIP */
-.chip {
-  display: inline-flex; align-items: center; gap: 4px;
-  background: var(--bg3);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 3px 10px;
-  font-size: 11px;
-  color: var(--text3);
-  font-weight: 600;
-}
-.chip.green { background: rgba(16,185,129,0.1); border-color: rgba(16,185,129,0.2); color: #10b981; }
-.chip.red { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.2); color: #ef4444; }
-.chip.amber { background: rgba(245,158,11,0.1); border-color: rgba(245,158,11,0.2); color: var(--amber); }
-
-/* FEATURE CHIPS ROW */
-.features-row {
-  display: flex; gap: 6px; flex-wrap: wrap;
-  justify-content: center;
-  margin-top: 12px;
-}
+/* COUNTRY ROW */
+.country-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;}
+.country-btn{background:var(--bg3);border:1px solid var(--border);border-radius:9px;padding:6px 13px;cursor:pointer;font-weight:700;font-size:11px;color:var(--text3);transition:all 0.15s;font-family:'Outfit',sans-serif;}
+.country-btn:hover{border-color:var(--border2);color:var(--text2);}
+.country-btn.active{background:rgba(232,160,32,0.1);border-color:rgba(232,160,32,0.35);color:var(--amber);}
+.country-btn.active-blue{background:rgba(45,107,228,0.1);border-color:rgba(45,107,228,0.35);color:var(--blue2);}
+.verify-form input{margin-bottom:10px;}
 </style>
 </head>
 <body>
+<div class="glow-tl"></div><div class="glow-br"></div>
 
 <div class="topbar">
-  <div class="logo" onclick="goHome()">
-    <div class="logo-bolt">⚡</div>
-    Watt<span>Done</span>
-    <span class="badge-v">v3</span>
-  </div>
-  <div class="langs">
-    <button class="lang-btn active" onclick="setLang('tr')">🇹🇷</button>
-    <button class="lang-btn" onclick="setLang('en')">🇬🇧</button>
-    <button class="lang-btn" onclick="setLang('nl')">🇳🇱</button>
-    <button class="lang-btn" onclick="setLang('de')">🇩🇪</button>
-    <button class="lang-btn" onclick="setLang('fr')">🇫🇷</button>
-  </div>
+  <div class="logo" onclick="goHome()"><div class="logo-mark">⚡</div>Watt<span class="logo-done">Done</span><span class="logo-badge">V3</span></div>
+  <div class="current-lang" onclick="goLangSelect()" id="lang-display">🌐 EN</div>
 </div>
 
 <div class="container">
 
-  <!-- ═══════════════ HOME ═══════════════ -->
-  <div class="screen active" id="screen-home">
-    <div class="hero">
-      <div class="hero-glow"></div>
-      <div class="hero-bolt">⚡</div>
-      <div class="hero-title" id="txt-tagline">Elektrik İşlerinde<br><span>Akıllı Asistan</span></div>
-      <div class="features-row">
-        <span class="chip amber">🤖 AI Destekli</span>
-        <span class="chip">🇪🇺 6 AB Ülkesi</span>
-        <span class="chip">🏢 B2B Paketi</span>
-      </div>
-      <div class="hero-sub" style="margin-top:14px">BE · NL · DE · FR · IT · ES</div>
-    </div>
-
-    <div class="mode-cards">
-      <div class="mode-card customer" onclick="showScreen('customer-home')">
-        <div class="mode-icon c">🏠</div>
-        <div class="mode-info">
-          <div class="mode-label" id="txt-customer">Müşteri</div>
-          <div class="mode-sub" id="txt-customer-sub">Arıza analizi, watt kontrolü, elektrikçi planı</div>
-        </div>
-        <div class="mode-arrow">›</div>
-      </div>
-      <div class="mode-card master" onclick="showScreen('master-verify')">
-        <div class="mode-icon m">🔧</div>
-        <div class="mode-info">
-          <div class="mode-label" id="txt-master">Lisanslı Usta</div>
-          <div class="mode-sub" id="txt-master-sub">Teknik asistan, sistem planlayıcı, yönetmelik rehberi</div>
-        </div>
-        <div class="mode-arrow">›</div>
-      </div>
-    </div>
-
-    <div class="stats">
-      <div class="stat"><div class="stat-v">6</div><div class="stat-l">AB Ülkesi</div></div>
-      <div class="stat"><div class="stat-v" style="color:var(--blue2)">AI</div><div class="stat-l">Destekli</div></div>
-      <div class="stat"><div class="stat-v" style="color:var(--green)">B2B</div><div class="stat-l">Firma Paketi</div></div>
+<!-- LANG SELECT -->
+<div class="screen active" id="screen-lang">
+  <div class="lang-screen">
+    <div class="lang-icon">⚡</div>
+    <div class="lang-title">WattDone</div>
+    <div class="lang-desc">Smart Electrical Assistant — Choose your language</div>
+    <div class="lang-grid">
+      <div class="lang-opt" onclick="selectLang('en')"><div class="lang-flag">🇬🇧</div><div><div class="lang-name">English</div><div class="lang-native">English</div></div></div>
+      <div class="lang-opt" onclick="selectLang('nl')"><div class="lang-flag">🇳🇱</div><div><div class="lang-name">Nederlands</div><div class="lang-native">Dutch</div></div></div>
+      <div class="lang-opt" onclick="selectLang('de')"><div class="lang-flag">🇩🇪</div><div><div class="lang-name">Deutsch</div><div class="lang-native">German</div></div></div>
+      <div class="lang-opt" onclick="selectLang('fr')"><div class="lang-flag">🇫🇷</div><div><div class="lang-name">Français</div><div class="lang-native">French</div></div></div>
+      <div class="lang-opt full-width" onclick="selectLang('tr')"><div class="lang-flag">🇹🇷</div><div><div class="lang-name">Türkçe</div><div class="lang-native">Turkish</div></div></div>
     </div>
   </div>
-
-  <!-- ═══════════════ CUSTOMER HOME ═══════════════ -->
-  <div class="screen" id="screen-customer-home">
-    <button class="back-btn" onclick="goHome()">← Geri</button>
-    <div class="page-header">
-      <div class="page-header-icon amber">🏠</div>
-      <div>
-        <div class="page-header-title">Müşteri Paneli</div>
-        <div class="page-header-sub">Ev elektriğiniz için AI destekli araçlar</div>
-      </div>
-    </div>
-    <div class="label">ÜLKENİZİ SEÇİN</div>
-    <div class="country-row" id="country-customer"></div>
-
-    <div class="menu-card amber" onclick="showScreen('customer-ai')">
-      <div class="menu-icon amber">🤖</div>
-      <div>
-        <div class="menu-label">Arıza & Sorun Analizi</div>
-        <div class="menu-sub">Fotoğraf yükle veya problemi yaz — AI analiz etsin</div>
-      </div>
-      <div class="mode-arrow" style="margin-left:auto">›</div>
-    </div>
-    <div class="menu-card amber" onclick="showScreen('customer-watt')">
-      <div class="menu-icon amber">🔢</div>
-      <div>
-        <div class="menu-label">Watt Kapasite Kontrolü</div>
-        <div class="menu-sub">Hattınız bu yükü taşıyabilir mi?</div>
-      </div>
-      <div class="mode-arrow" style="margin-left:auto">›</div>
-    </div>
-    <div class="menu-card amber" onclick="showScreen('customer-regs')">
-      <div class="menu-icon amber">📋</div>
-      <div>
-        <div class="menu-label">Yönetmelik Bilgisi</div>
-        <div class="menu-sub" id="regs-sub-c">Ülke elektrik standartları</div>
-      </div>
-      <div class="mode-arrow" style="margin-left:auto">›</div>
-    </div>
-  </div>
-
-  <!-- ═══════════════ CUSTOMER AI ═══════════════ -->
-  <div class="screen" id="screen-customer-ai">
-    <button class="back-btn" onclick="showScreen('customer-home')">← Geri</button>
-    <div class="page-header">
-      <div class="page-header-icon amber">🤖</div>
-      <div>
-        <div class="page-header-title">AI Arıza Analizi</div>
-        <div class="page-header-sub">Probleminizi anlatın veya fotoğraf ekleyin</div>
-      </div>
-    </div>
-    <div class="label">FOTOĞRAF (İSTEĞE BAĞLI)</div>
-    <div class="upload-area" onclick="document.getElementById('img-c').click()" id="upload-c">
-      <div class="upload-icon">📷</div>
-      <div class="upload-text">Fotoğraf yükle</div>
-      <div class="upload-hint">Priz, sigorta kutusu, kablo fotoğrafı vb.</div>
-    </div>
-    <input type="file" id="img-c" accept="image/*" style="display:none" onchange="handleImage('c',this)">
-    <div class="label" style="margin-top:4px">PROBLEMİNİZİ ANLATINI</div>
-    <textarea id="ai-input-c" rows="4" placeholder="Örn: Sigorta atıyor, priz çalışmıyor, koku var..."></textarea>
-    <button class="btn btn-amber" onclick="analyzeCustomer()">⚡ AI ile Analiz Et</button>
-    <div id="result-c"></div>
-  </div>
-
-  <!-- ═══════════════ CUSTOMER WATT ═══════════════ -->
-  <div class="screen" id="screen-customer-watt">
-    <button class="back-btn" onclick="showScreen('customer-home')">← Geri</button>
-    <div class="page-header">
-      <div class="page-header-icon amber">🔢</div>
-      <div>
-        <div class="page-header-title">Watt Kapasite Kontrolü</div>
-        <div class="page-header-sub">Cihaz ekle, kapasiteyi hesapla</div>
-      </div>
-    </div>
-    <div id="watt-list-c"></div>
-    <button class="btn btn-ghost" onclick="addDevice()" style="margin-top:0">+ Cihaz Ekle</button>
-    <div id="watt-result-c" style="margin-top:16px"></div>
-    <div id="watt-rule-c"></div>
-  </div>
-
-  <!-- ═══════════════ CUSTOMER REGS ═══════════════ -->
-  <div class="screen" id="screen-customer-regs">
-    <button class="back-btn" onclick="showScreen('customer-home')">← Geri</button>
-    <div class="section-title" id="regs-title-c">Yönetmelik</div>
-    <div id="regs-content-c"></div>
-  </div>
-
-  <!-- ═══════════════ MASTER VERIFY ═══════════════ -->
-  <div class="screen" id="screen-master-verify">
-    <button class="back-btn" onclick="goHome()">← Geri</button>
-    <div class="page-header">
-      <div class="page-header-icon blue">🔧</div>
-      <div>
-        <div class="page-header-title">Pro Giriş</div>
-        <div class="page-header-sub">Lisanslı elektrikçiler ve firmalar için</div>
-      </div>
-    </div>
-    <div class="verify-form">
-      <div class="label">AD SOYAD / FİRMA ADI</div>
-      <input type="text" id="v-name" placeholder="Jan De Vries">
-      <div class="label">ŞİRKET / KVK / BCE NO</div>
-      <input type="text" id="v-company" placeholder="WattElec BVBA · BCE 0123.456.789">
-      <div class="label">ELEKTRİK LİSANS NO</div>
-      <input type="text" id="v-license" placeholder="P1 / ERK-2024-XXXX">
-      <div class="label">ÇALIŞTIĞINIZ ÜLKE</div>
-      <div class="country-row" id="country-verify"></div>
-      <div class="info-box">
-        <div class="info-title">🏢 FİRMA PAKETİ (B2B)</div>
-        10+ çalışan için toplu kullanıcı hesabı. Özel fiyatlandırma:<br><strong style="color:var(--blue2)">info@wattdone.eu</strong>
-      </div>
-      <button class="btn btn-blue" onclick="doVerify()" style="margin-top:14px">✓ Doğrulama Başvurusu Gönder</button>
-    </div>
-  </div>
-
-  <!-- ═══════════════ MASTER HOME ═══════════════ -->
-  <div class="screen" id="screen-master-home">
-    <div class="master-header">
-      <div class="master-header-info">
-        <div class="section-title" style="margin-bottom:4px">🔧 Usta Paneli</div>
-        <div class="verified-badge" id="verified-name">✓ Doğrulandı</div>
-      </div>
-      <button class="btn btn-ghost" onclick="goHome()" style="width:auto;padding:8px 16px;font-size:12px;margin:0">Çıkış</button>
-    </div>
-
-    <div class="menu-card" onclick="showScreen('master-ai')">
-      <div class="menu-icon">🤖</div>
-      <div><div class="menu-label">AI Teknik Asistan</div><div class="menu-sub">Şema okuma, teknik soru, fotoğraf analizi</div></div>
-      <div class="mode-arrow" style="margin-left:auto">›</div>
-    </div>
-    <div class="menu-card" onclick="showScreen('master-plan')">
-      <div class="menu-icon">📐</div>
-      <div><div class="menu-label">Sıfırdan Sistem Planlayıcı</div><div class="menu-sub">Evin tüm elektrik altyapısını planla</div></div>
-      <div class="mode-arrow" style="margin-left:auto">›</div>
-    </div>
-    <div class="menu-card" onclick="showScreen('master-watt')">
-      <div class="menu-icon">🔢</div>
-      <div><div class="menu-label">Watt & Devre Hesaplayıcı</div><div class="menu-sub">Kapasite kontrolü, yönetmelik uyarıları</div></div>
-      <div class="mode-arrow" style="margin-left:auto">›</div>
-    </div>
-    <div class="menu-card" onclick="showScreen('master-regs')">
-      <div class="menu-icon">📚</div>
-      <div><div class="menu-label">AB Yönetmelik Veritabanı</div><div class="menu-sub">6 ülke — güncel standartlar</div></div>
-      <div class="mode-arrow" style="margin-left:auto">›</div>
-    </div>
-  </div>
-
-  <!-- ═══════════════ MASTER AI ═══════════════ -->
-  <div class="screen" id="screen-master-ai">
-    <button class="back-btn" onclick="showScreen('master-home')">← Geri</button>
-    <div class="page-header">
-      <div class="page-header-icon blue">🤖</div>
-      <div>
-        <div class="page-header-title">AI Teknik Asistan</div>
-        <div class="page-header-sub">Profesyonel teknik analiz ve standart rehberi</div>
-      </div>
-    </div>
-    <div class="label">YÖNETMELİK STANDARDI</div>
-    <div class="country-row" id="country-master-ai"></div>
-    <div class="label">FOTOĞRAF / ŞEMA (İSTEĞE BAĞLI)</div>
-    <div class="upload-area" onclick="document.getElementById('img-m').click()" id="upload-m">
-      <div class="upload-icon">📷</div>
-      <div class="upload-text">Şema / Etiket / Pano fotoğrafı yükle</div>
-      <div class="upload-hint">JPEG, PNG — Max 10MB</div>
-    </div>
-    <input type="file" id="img-m" accept="image/*" style="display:none" onchange="handleImage('m',this)">
-    <div class="label">TEKNİK SORUNUZ</div>
-    <textarea id="ai-input-m" rows="4" placeholder="Bağlantı şeması, devre hesabı, ürün analizi..."></textarea>
-    <button class="btn btn-blue" onclick="analyzeMaster()">🔧 Teknik Analiz Et</button>
-    <div id="result-m"></div>
-  </div>
-
-  <!-- ═══════════════ MASTER PLAN ═══════════════ -->
-  <div class="screen" id="screen-master-plan">
-    <button class="back-btn" onclick="showScreen('master-home')">← Geri</button>
-    <div class="page-header">
-      <div class="page-header-icon blue">📐</div>
-      <div>
-        <div class="page-header-title">Sistem Planlayıcı</div>
-        <div class="page-header-sub">Sıfırdan elektrik altyapısı tasarla</div>
-      </div>
-    </div>
-    <div class="label">ÜLKE YÖNETMELİĞİ</div>
-    <div class="country-row" id="country-master-plan"></div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
-      <div>
-        <div class="label">TOPLAM ALAN (m²)</div>
-        <input type="number" id="plan-area" value="80">
-      </div>
-      <div>
-        <div class="label">ODA SAYISI</div>
-        <input type="number" id="plan-rooms" value="5">
-      </div>
-    </div>
-    <div class="label">EK SİSTEMLER</div>
-    <div class="toggle-row">
-      <button class="toggle-btn" id="tog-ev" onclick="toggleOpt('ev')">🚗 EV Şarj</button>
-      <button class="toggle-btn" id="tog-solar" onclick="toggleOpt('solar')">☀️ Güneş Panel</button>
-      <button class="toggle-btn" id="tog-ac" onclick="toggleOpt('ac')">❄️ Klima</button>
-    </div>
-    <button class="btn btn-blue" onclick="generatePlan()">📐 Sistem Planı Oluştur</button>
-    <div id="plan-result"></div>
-  </div>
-
-  <!-- ═══════════════ MASTER WATT ═══════════════ -->
-  <div class="screen" id="screen-master-watt">
-    <button class="back-btn" onclick="showScreen('master-home')">← Geri</button>
-    <div class="page-header">
-      <div class="page-header-icon blue">🔢</div>
-      <div>
-        <div class="page-header-title">Watt & Devre Hesaplayıcı</div>
-        <div class="page-header-sub">Kapasite kontrolü ve yönetmelik uyarıları</div>
-      </div>
-    </div>
-    <div class="label">ÜLKE STANDARDI</div>
-    <div class="country-row" id="country-master-watt"></div>
-    <div id="watt-list-m"></div>
-    <button class="btn btn-ghost" onclick="addDeviceM()" style="margin-top:0">+ Cihaz Ekle</button>
-    <div id="watt-result-m" style="margin-top:16px"></div>
-  </div>
-
-  <!-- ═══════════════ MASTER REGS ═══════════════ -->
-  <div class="screen" id="screen-master-regs">
-    <button class="back-btn" onclick="showScreen('master-home')">← Geri</button>
-    <div class="section-title">📚 AB Yönetmelik Veritabanı</div>
-    <div class="country-row" id="country-master-regs"></div>
-    <div id="regs-content-m"></div>
-  </div>
-
 </div>
 
+<!-- HOME -->
+<div class="screen" id="screen-home">
+  <div class="home-hero">
+    <div class="home-bolt">⚡</div>
+    <div class="home-title" id="h-tagline">Smart <em>Electrical</em><br>Assistant</div>
+    <div class="home-sub">Professional · AI-Powered · EU Standards</div>
+    <div class="country-chips"><span class="country-chip">🇧🇪 BE</span><span class="country-chip">🇳🇱 NL</span><span class="country-chip">🇩🇪 DE</span><span class="country-chip">🇫🇷 FR</span><span class="country-chip">🇮🇹 IT</span><span class="country-chip">🇪🇸 ES</span></div>
+  </div>
+  <div class="section-label" id="h-select-country">Select your country</div>
+  <div class="country-grid" id="home-country-grid"></div>
+  <div class="mode-cards">
+    <div class="mode-card customer" onclick="showScreen('customer-home')">
+      <div class="mode-icon c">🏠</div>
+      <div class="mode-info"><div class="mode-label" id="h-customer">Customer</div><div class="mode-sub" id="h-customer-sub">Fault analysis, watt check, electrician guide</div></div>
+      <div class="mode-arr">›</div>
+    </div>
+    <div class="mode-card master" onclick="showScreen('master-verify')">
+      <div class="mode-icon m">🔧</div>
+      <div class="mode-info"><div class="mode-label" id="h-master">Licensed Pro</div><div class="mode-sub" id="h-master-sub">Technical assistant, system planner, regulation database</div></div>
+      <div class="mode-arr">›</div>
+    </div>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="stat-v">6</div><div class="stat-l" id="h-stat1">EU Countries</div></div>
+    <div class="stat"><div class="stat-v" style="color:var(--blue2)">AI</div><div class="stat-l" id="h-stat2">Powered</div></div>
+    <div class="stat"><div class="stat-v" style="color:var(--green2)">B2B</div><div class="stat-l" id="h-stat3">Pro Package</div></div>
+  </div>
+</div>
+
+<!-- CUSTOMER HOME -->
+<div class="screen" id="screen-customer-home">
+  <button class="back-btn" onclick="goHome()">← <span class="bk">Back</span></button>
+  <div class="page-header"><div class="phi a">🏠</div><div><div class="ph-title" id="c-panel">Customer Panel</div><div class="ph-sub" id="c-panel-sub">AI tools for your home electrical needs</div></div></div>
+  <div class="menu-card a" onclick="showScreen('customer-ai')"><div class="menu-icon mi-a">🤖</div><div><div class="menu-label" id="c-m-ai">Fault & Problem Analysis</div><div class="menu-sub" id="c-m-ai-sub">Upload a photo or describe your issue</div></div><div class="mode-arr" style="margin-left:auto">›</div></div>
+  <div class="menu-card a" onclick="showScreen('customer-watt')"><div class="menu-icon mi-a">🔢</div><div><div class="menu-label" id="c-m-watt">Watt Capacity Check</div><div class="menu-sub" id="c-m-watt-sub">Can your line handle this load?</div></div><div class="mode-arr" style="margin-left:auto">›</div></div>
+  <div class="menu-card a" onclick="showScreen('customer-kw')"><div class="menu-icon mi-g">💡</div><div><div class="menu-label" id="c-m-kw">Monthly Energy Cost</div><div class="menu-sub" id="c-m-kw-sub">Calculate your electricity bill</div></div><div class="mode-arr" style="margin-left:auto">›</div></div>
+  <div class="menu-card a" onclick="showScreen('customer-regs')"><div class="menu-icon mi-a">📋</div><div><div class="menu-label" id="c-m-regs">Regulations</div><div class="menu-sub" id="c-m-regs-sub">Electrical standards for your country</div></div><div class="mode-arr" style="margin-left:auto">›</div></div>
+</div>
+
+<!-- CUSTOMER AI -->
+<div class="screen" id="screen-customer-ai">
+  <button class="back-btn" onclick="showScreen('customer-home')">← <span class="bk">Back</span></button>
+  <div class="page-header"><div class="phi a">🤖</div><div><div class="ph-title" id="c-ai-title">AI Fault Analysis</div><div class="ph-sub" id="c-ai-sub">Describe the problem or upload a photo</div></div></div>
+  <div class="lbl" id="c-photo-lbl">PHOTO (OPTIONAL)</div>
+  <div class="upload-area" onclick="document.getElementById('img-c').click()" id="upload-c"><div class="upload-icon">📷</div><div class="upload-text" id="c-upload-txt">Upload photo</div><div class="upload-hint">Socket, fuse box, cable photo etc.</div></div>
+  <input type="file" id="img-c" accept="image/*" style="display:none" onchange="handleImage('c',this)">
+  <div class="lbl" id="c-desc-lbl">DESCRIBE YOUR PROBLEM</div>
+  <textarea id="ai-input-c" rows="4" placeholder="e.g. Fuse keeps tripping, socket not working..."></textarea>
+  <button class="btn btn-amber" onclick="analyzeCustomer()">⚡ <span id="c-analyze-btn">Analyze with AI</span></button>
+  <div id="result-c"></div>
+</div>
+
+<!-- CUSTOMER WATT -->
+<div class="screen" id="screen-customer-watt">
+  <button class="back-btn" onclick="showScreen('customer-home')">← <span class="bk">Back</span></button>
+  <div class="page-header"><div class="phi a">🔢</div><div><div class="ph-title" id="c-watt-title">Watt Capacity Check</div><div class="ph-sub" id="c-watt-sub">Add devices to check your line capacity</div></div></div>
+  <div id="watt-list-c"></div>
+  <button class="btn btn-ghost" onclick="addDevice()" style="margin-top:0">+ <span id="c-add-dev">Add Device</span></button>
+  <div id="watt-result-c" style="margin-top:14px"></div>
+</div>
+
+<!-- CUSTOMER KW -->
+<div class="screen" id="screen-customer-kw">
+  <button class="back-btn" onclick="showScreen('customer-home')">← <span class="bk">Back</span></button>
+  <div class="page-header"><div class="phi g">💡</div><div><div class="ph-title" id="c-kw-title">Monthly Energy Cost</div><div class="ph-sub" id="c-kw-sub">Calculate your electricity bill</div></div></div>
+  <div class="lbl" id="c-tariff-lbl">ELECTRICITY TARIFF (€/kWh)</div>
+  <input type="number" id="kw-tariff" value="0.28" step="0.01" style="margin-bottom:12px">
+  <div style="display:grid;grid-template-columns:1fr 80px 70px 36px;gap:6px;margin-bottom:6px">
+    <div class="lbl" style="margin-bottom:0">APPLIANCE</div>
+    <div class="lbl" style="margin-bottom:0">WATTS</div>
+    <div class="lbl" style="margin-bottom:0">H/DAY</div>
+    <div></div>
+  </div>
+  <div id="kw-devices-list"></div>
+  <button class="btn btn-ghost" onclick="addKwDevice()" style="margin-top:0">+ <span id="c-kw-add">Add Appliance</span></button>
+  <button class="btn btn-green" onclick="calcKw()" style="margin-top:14px">💡 <span id="c-kw-calc">Calculate Cost</span></button>
+  <div id="kw-result"></div>
+</div>
+
+<!-- CUSTOMER REGS -->
+<div class="screen" id="screen-customer-regs">
+  <button class="back-btn" onclick="showScreen('customer-home')">← <span class="bk">Back</span></button>
+  <div class="section-title" id="regs-title-c">Regulations</div>
+  <div id="regs-content-c"></div>
+</div>
+
+<!-- MASTER VERIFY -->
+<div class="screen" id="screen-master-verify">
+  <button class="back-btn" onclick="goHome()">← <span class="bk">Back</span></button>
+  <div class="page-header"><div class="phi b">🔧</div><div><div class="ph-title" id="m-pro-title">Pro Login</div><div class="ph-sub" id="m-pro-sub">For licensed electricians and companies</div></div></div>
+  <div class="verify-form">
+    <div class="lbl" id="v-name-lbl">FULL NAME / COMPANY NAME</div>
+    <input type="text" id="v-name" placeholder="Jan De Vries">
+    <div class="lbl" id="v-company-lbl">COMPANY / KVK / BCE NUMBER</div>
+    <input type="text" id="v-company" placeholder="WattElec BVBA · BCE 0123.456.789">
+    <div class="lbl" id="v-license-lbl">ELECTRICAL LICENSE NUMBER</div>
+    <input type="text" id="v-license" placeholder="P1 / ERK-2024-XXXX">
+    <div class="lbl" id="v-country-lbl">COUNTRY OF OPERATION</div>
+    <div class="country-row" id="country-verify"></div>
+    <div class="info-box"><div class="box-title bt-b">🏢 B2B COMPANY PACKAGE</div><span id="v-b2b-info">Bulk accounts for 10+ employees. Custom pricing: </span><strong style="color:var(--blue2)">info@wattdone.eu</strong></div>
+    <button class="btn btn-blue" onclick="doVerify()" style="margin-top:14px">✓ <span id="v-btn">Submit Verification</span></button>
+  </div>
+</div>
+
+<!-- MASTER HOME -->
+<div class="screen" id="screen-master-home">
+  <div class="master-header">
+    <div><div class="section-title" style="margin-bottom:4px" id="m-panel">🔧 Pro Panel</div><div class="verified-badge" id="verified-name">✓ Verified</div></div>
+    <button class="btn btn-ghost" onclick="goHome()" style="width:auto;padding:8px 16px;font-size:11px;margin:0" id="m-logout">Logout</button>
+  </div>
+  <div class="menu-card" onclick="showScreen('master-ai')"><div class="menu-icon mi-b">🤖</div><div><div class="menu-label" id="m-m-ai">AI Technical Assistant</div><div class="menu-sub" id="m-m-ai-sub">Schematic reading, technical Q&A, photo analysis</div></div><div class="mode-arr" style="margin-left:auto">›</div></div>
+  <div class="menu-card" onclick="showScreen('master-plan')"><div class="menu-icon mi-b">📐</div><div><div class="menu-label" id="m-m-plan">System Planner</div><div class="menu-sub" id="m-m-plan-sub">Design full electrical infrastructure from scratch</div></div><div class="mode-arr" style="margin-left:auto">›</div></div>
+  <div class="menu-card" onclick="showScreen('master-watt')"><div class="menu-icon mi-b">🔢</div><div><div class="menu-label" id="m-m-watt">Watt & Circuit Calculator</div><div class="menu-sub" id="m-m-watt-sub">Capacity check with regulation warnings</div></div><div class="mode-arr" style="margin-left:auto">›</div></div>
+  <div class="menu-card" onclick="showScreen('master-regs')"><div class="menu-icon mi-b">📚</div><div><div class="menu-label" id="m-m-regs">EU Regulation Database</div><div class="menu-sub" id="m-m-regs-sub">6 countries — current standards</div></div><div class="mode-arr" style="margin-left:auto">›</div></div>
+  <div class="pro-coming"><div class="pro-title">🔒 Full Pro Access — Coming Soon</div><div class="pro-sub" id="m-pro-coming">PDF reports, advanced tools, priority AI</div><div><span class="pro-price">€9.99</span><span style="font-size:11px;color:var(--text3)"> / month</span></div></div>
+</div>
+
+<!-- MASTER AI -->
+<div class="screen" id="screen-master-ai">
+  <button class="back-btn" onclick="showScreen('master-home')">← <span class="bk">Back</span></button>
+  <div class="page-header"><div class="phi b">🤖</div><div><div class="ph-title" id="m-ai-title">AI Technical Assistant</div><div class="ph-sub" id="m-ai-sub">Professional analysis per EU standard</div></div></div>
+  <div class="lbl" id="m-reg-lbl">REGULATION STANDARD</div>
+  <div class="country-row" id="country-master-ai"></div>
+  <div class="lbl" id="m-schema-lbl">PHOTO / SCHEMATIC (OPTIONAL)</div>
+  <div class="upload-area" onclick="document.getElementById('img-m').click()" id="upload-m"><div class="upload-icon">📷</div><div class="upload-text" id="m-upload-txt">Upload schematic / panel photo</div><div class="upload-hint">JPEG, PNG</div></div>
+  <input type="file" id="img-m" accept="image/*" style="display:none" onchange="handleImage('m',this)">
+  <div class="lbl" id="m-tech-lbl">TECHNICAL QUESTION</div>
+  <textarea id="ai-input-m" rows="4" placeholder="Wiring diagram, circuit calculation, product analysis..."></textarea>
+  <button class="btn btn-blue" onclick="analyzeMaster()">🔧 <span id="m-analyze-btn">Technical Analysis</span></button>
+  <div id="result-m"></div>
+</div>
+
+<!-- MASTER PLAN -->
+<div class="screen" id="screen-master-plan">
+  <button class="back-btn" onclick="showScreen('master-home')">← <span class="bk">Back</span></button>
+  <div class="page-header"><div class="phi b">📐</div><div><div class="ph-title" id="m-plan-title">System Planner</div><div class="ph-sub" id="m-plan-sub">Design electrical infrastructure from scratch</div></div></div>
+  <div class="lbl">REGULATION</div>
+  <div class="country-row" id="country-master-plan"></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+    <div><div class="lbl" id="m-area-lbl">TOTAL AREA (m²)</div><input type="number" id="plan-area" value="80"></div>
+    <div><div class="lbl" id="m-rooms-lbl">NUMBER OF ROOMS</div><input type="number" id="plan-rooms" value="5"></div>
+  </div>
+  <div class="lbl" id="m-extra-lbl">EXTRA SYSTEMS</div>
+  <div class="toggle-row">
+    <button class="toggle-btn" id="tog-ev" onclick="toggleOpt('ev')">🚗 EV Charging</button>
+    <button class="toggle-btn" id="tog-solar" onclick="toggleOpt('solar')">☀️ Solar Panel</button>
+    <button class="toggle-btn" id="tog-ac" onclick="toggleOpt('ac')">❄️ Air Conditioning</button>
+  </div>
+  <button class="btn btn-blue" onclick="generatePlan()">📐 <span id="m-gen-btn">Generate System Plan</span></button>
+  <div id="plan-result"></div>
+</div>
+
+<!-- MASTER WATT -->
+<div class="screen" id="screen-master-watt">
+  <button class="back-btn" onclick="showScreen('master-home')">← <span class="bk">Back</span></button>
+  <div class="page-header"><div class="phi b">🔢</div><div><div class="ph-title" id="m-watt-title">Watt & Circuit Calculator</div><div class="ph-sub" id="m-watt-sub">Capacity check with regulation alerts</div></div></div>
+  <div class="lbl">STANDARD</div>
+  <div class="country-row" id="country-master-watt"></div>
+  <div id="watt-list-m"></div>
+  <button class="btn btn-ghost" onclick="addDeviceM()" style="margin-top:0">+ <span id="m-add-dev">Add Device</span></button>
+  <div id="watt-result-m" style="margin-top:14px"></div>
+</div>
+
+<!-- MASTER REGS -->
+<div class="screen" id="screen-master-regs">
+  <button class="back-btn" onclick="showScreen('master-home')">← <span class="bk">Back</span></button>
+  <div class="section-title" id="m-regs-title">📚 EU Regulation Database</div>
+  <div class="country-row" id="country-master-regs"></div>
+  <div id="regs-content-m"></div>
+</div>
+
+</div>
 <script>
-const REGS = {
-  BE:{name:"Belçika",flag:"🇧🇪",std:"RGIE 2020",maxSock:8,cables:{light:1.5,sock:2.5,kitchen:4.0,oven:6.0},rcd:{bath:30,gen:300},kitchen:"Bulaşık makinesi, fırın ve ocak ayrı devre zorunlu (RGIE Art.271)",note:"Satışta uygunluk belgesi zorunlu. Lisanssız tesisat sigortayı geçersiz kılar.",inspect:"CERGA / KEMA"},
-  NL:{name:"Hollanda",flag:"🇳🇱",std:"NEN 1010:2020",maxSock:10,cables:{light:1.5,sock:2.5,kitchen:4.0,oven:6.0},rcd:{bath:30,gen:300},kitchen:"2022 sonrası: Her büyük cihaz (fırın, bulaşık, çamaşır) ayrı devre zorunlu",note:"NEN 1010:2020, 23 Nisan 2021'den itibaren zorunlu. E-installatiecertificaat gerekli.",inspect:"SCIOS / Kiwa"},
-  DE:{name:"Almanya",flag:"🇩🇪",std:"VDE 0100",maxSock:12,cables:{light:1.5,sock:2.5,kitchen:4.0,oven:6.0},rcd:{bath:30,gen:300},kitchen:"Fırın ve ankastre cihazlar ayrı devre. Min 3 ayrı priz devresi mutfakta.",note:"Sadece yetkili elektrik firmaları tesisat yapabilir (Elektrohandwerk).",inspect:"VDE / TÜV"},
-  FR:{name:"Fransa",flag:"🇫🇷",std:"NFC 15-100",maxSock:8,cables:{light:1.5,sock:2.5,kitchen:4.0,oven:6.0},rcd:{bath:30,gen:500},kitchen:"Min 6 ayrı priz devresi mutfakta. Fırın için 32A/6mm² ayrı hat.",note:"Consuel belgesi olmadan elektrik bağlantısı yapılmaz.",inspect:"Consuel"},
-  IT:{name:"İtalya",flag:"🇮🇹",std:"CEI 64-8",maxSock:10,cables:{light:1.5,sock:2.5,kitchen:4.0,oven:6.0},rcd:{bath:30,gen:300},kitchen:"Fırın için ayrı 16A devre. Mutfakta min 4 priz devresi.",note:"Dichiarazione di Conformità (DoC) zorunlu — 90 gün içinde teslim.",inspect:"INAIL / ASL"},
-  ES:{name:"İspanya",flag:"🇪🇸",std:"REBT 2002",maxSock:10,cables:{light:1.5,sock:2.5,kitchen:4.0,oven:6.0},rcd:{bath:30,gen:300},kitchen:"Fırın, çamaşır ve bulaşık makinesi ayrı devre. Mutfakta min 3 devre.",note:"Boletín eléctrico zorunlu. Yetkisiz tesisat yüksek para cezasına yol açar.",inspect:"OCA / EIC"}
+const REGS={
+  BE:{name:"Belgium",flag:"🇧🇪",std:"RGIE 2020",maxSock:8,cables:{light:1.5,sock:2.5,kitchen:4.0,oven:6.0},rcd:{bath:30,gen:300},kitchen:"Dishwasher, oven and hob must each have a dedicated circuit (RGIE Art.271)",note:"Conformity certificate required on sale. Unlicensed installation invalidates insurance.",inspect:"CERGA / KEMA",rate:0.30},
+  NL:{name:"Netherlands",flag:"🇳🇱",std:"NEN 1010:2020",maxSock:10,cables:{light:1.5,sock:2.5,kitchen:4.0,oven:6.0},rcd:{bath:30,gen:300},kitchen:"From 2022: each major appliance requires a dedicated circuit",note:"NEN 1010:2020 mandatory since 23 April 2021. E-installatiecertificaat required.",inspect:"SCIOS / Kiwa",rate:0.32},
+  DE:{name:"Germany",flag:"🇩🇪",std:"VDE 0100",maxSock:12,cables:{light:1.5,sock:2.5,kitchen:4.0,oven:6.0},rcd:{bath:30,gen:300},kitchen:"Oven and built-in appliances require separate circuits. Min. 3 socket circuits in kitchen.",note:"Only authorised electrical firms may install (Elektrohandwerk).",inspect:"VDE / TÜV",rate:0.31},
+  FR:{name:"France",flag:"🇫🇷",std:"NFC 15-100",maxSock:8,cables:{light:1.5,sock:2.5,kitchen:4.0,oven:6.0},rcd:{bath:30,gen:500},kitchen:"Min. 6 dedicated socket circuits in kitchen. Oven requires 32A/6mm² dedicated line.",note:"Electrical connection not possible without Consuel certificate.",inspect:"Consuel",rate:0.22},
+  IT:{name:"Italy",flag:"🇮🇹",std:"CEI 64-8",maxSock:10,cables:{light:1.5,sock:2.5,kitchen:4.0,oven:6.0},rcd:{bath:30,gen:300},kitchen:"Dedicated 16A circuit for oven. Min. 4 socket circuits in kitchen.",note:"Dichiarazione di Conformità (DoC) mandatory — submit within 90 days.",inspect:"INAIL / ASL",rate:0.25},
+  ES:{name:"Spain",flag:"🇪🇸",std:"REBT 2002",maxSock:10,cables:{light:1.5,sock:2.5,kitchen:4.0,oven:6.0},rcd:{bath:30,gen:300},kitchen:"Oven, washing machine and dishwasher on separate circuits. Min. 3 circuits in kitchen.",note:"Boletín eléctrico mandatory. Unauthorised installation leads to heavy fines.",inspect:"OCA / EIC",rate:0.22}
 };
 
-let selectedCountry = 'BE';
-let masterCountry = 'BE';
-let imageB64_c = null;
-let imageB64_m = null;
-let devices_c = [{name:'Fırın',watt:3000},{name:'Kettle',watt:2500}];
-let devices_m = [{name:'Fırın',watt:3000},{name:'Kettle',watt:2500}];
-let opts = {ev:false,solar:false,ac:false};
-let verifiedName = '';
+const T={
+  en:{tagline:"Smart <em>Electrical</em><br>Assistant",selectCountry:"Select your country",customer:"Customer",customerSub:"Fault analysis, watt check, electrician guide",master:"Licensed Pro",masterSub:"Technical assistant, system planner, regulation database",stat1:"EU Countries",stat2:"Powered",stat3:"Pro Package",back:"Back",cPanel:"Customer Panel",cPanelSub:"AI tools for your home electrical needs",mAi:"Fault & Problem Analysis",mAiSub:"Upload a photo or describe your issue",mWatt:"Watt Capacity Check",mWattSub:"Can your line handle this load?",mKw:"Monthly Energy Cost",mKwSub:"Calculate your electricity bill",mRegs:"Regulations",mRegsSub:"Electrical standards for your country",aiTitle:"AI Fault Analysis",aiSub:"Describe the problem or upload a photo",photoLbl:"PHOTO (OPTIONAL)",uploadTxt:"Upload photo",descLbl:"DESCRIBE YOUR PROBLEM",placeholder:"e.g. Fuse keeps tripping, socket not working, burning smell...",analyzeBtn:"Analyze with AI",wattTitle:"Watt Capacity Check",wattSub:"Add devices to check your line capacity",addDev:"Add Device",kwTitle:"Monthly Energy Cost",kwSub:"Calculate your electricity bill",tariffLbl:"ELECTRICITY TARIFF (€/kWh)",kwAdd:"Add Appliance",kwCalc:"Calculate Cost",proTitle:"Pro Login",proSub:"For licensed electricians and companies",vName:"FULL NAME / COMPANY NAME",vCompany:"COMPANY / KVK / BCE NUMBER",vLicense:"ELECTRICAL LICENSE NUMBER",vCountry:"COUNTRY OF OPERATION",b2bInfo:"Bulk accounts for 10+ employees. Custom pricing: ",vBtn:"Submit Verification",mPanel:"🔧 Pro Panel",logout:"Logout",mmAi:"AI Technical Assistant",mmAiSub:"Schematic reading, technical Q&A, photo analysis",mmPlan:"System Planner",mmPlanSub:"Design full electrical infrastructure from scratch",mmWatt:"Watt & Circuit Calculator",mmWattSub:"Capacity check with regulation warnings",mmRegs:"EU Regulation Database",mmRegsSub:"6 countries — current standards",proComing:"PDF reports, advanced tools, priority AI",mAiTitle:"AI Technical Assistant",mAiSub2:"Professional analysis per EU standard",regLbl:"REGULATION STANDARD",schemaLbl:"PHOTO / SCHEMATIC (OPTIONAL)",mUpload:"Upload schematic / panel photo",techLbl:"TECHNICAL QUESTION",mAnalyze:"Technical Analysis",planTitle:"System Planner",planSub:"Design electrical infrastructure from scratch",areaLbl:"TOTAL AREA (m²)",roomsLbl:"NUMBER OF ROOMS",extraLbl:"EXTRA SYSTEMS",genBtn:"Generate System Plan",mWattTitle:"Watt & Circuit Calculator",mWattSub2:"Capacity check with regulation alerts",mAddDev:"Add Device",mRegsTitle:"📚 EU Regulation Database",aiLabel:"AI ANALYSIS RESULT",aiWarn:"⚠️ This analysis is for informational purposes only. Always consult a licensed electrician for electrical work.",loading:"Analyzing...",loadingSub:"Applying standard: ",kwMonthly:"Monthly Cost",kwTotal:"Total Power",kwDay:"Per Day",kwYear:"Per Year",totalMax:"Total / Maximum",critical:"🔴 CRITICAL: Line capacity exceeded!",warning:"🟡 WARNING: Very close to capacity",safe:"✅ Safe — Line capacity sufficient",sepCircuit:"→ Separate circuit recommended",kitchenRule:"KITCHEN RULE",legalNote:"LEGAL NOTE",maxSock:"Max sockets/circuit",lightCable:"Lighting cable",sockCable:"Socket cable",kitchenCable:"Kitchen cable",ovenCable:"Oven cable",bathRcd:"Bathroom RCD",genRcd:"General RCD",inspBody:"Inspection body",circuits:"Circuits",legalWarn:"⚠️ LEGAL WARNING",pdfBtn:"📄 Download PDF Report"},
+  nl:{tagline:"Slimme <em>Elektrische</em><br>Assistent",selectCountry:"Selecteer uw land",customer:"Klant",customerSub:"Storingsanalyse, watt controle, elektricien gids",master:"Erkend Vakman",masterSub:"Technische assistent, systeemplanner, regelgevingsdatabase",stat1:"EU Landen",stat2:"KI-Ondersteund",stat3:"Bedrijfspakket",back:"Terug",cPanel:"Klantenpaneel",cPanelSub:"AI-tools voor uw elektrische behoeften thuis",mAi:"Storing & Probleemanalyse",mAiSub:"Upload een foto of beschrijf uw probleem",mWatt:"Watt Capaciteitscontrole",mWattSub:"Kan uw lijn deze belasting aan?",mKw:"Maandelijkse Energiekosten",mKwSub:"Bereken uw elektriciteitsrekening",mRegs:"Regelgeving",mRegsSub:"Elektrische standaarden voor uw land",aiTitle:"AI Storingsanalyse",aiSub:"Beschrijf het probleem of upload een foto",photoLbl:"FOTO (OPTIONEEL)",uploadTxt:"Foto uploaden",descLbl:"BESCHRIJF UW PROBLEEM",placeholder:"bijv. Zekering slaat door, stopcontact werkt niet...",analyzeBtn:"Analyseren met AI",wattTitle:"Watt Capaciteitscontrole",wattSub:"Apparaten toevoegen om capaciteit te controleren",addDev:"Apparaat toevoegen",kwTitle:"Maandelijkse Energiekosten",kwSub:"Bereken uw elektriciteitsrekening",tariffLbl:"ELEKTRICITEITSTARIEF (€/kWh)",kwAdd:"Apparaat toevoegen",kwCalc:"Kosten berekenen",proTitle:"Pro Inloggen",proSub:"Voor erkende elektriciens en bedrijven",vName:"NAAM / BEDRIJFSNAAM",vCompany:"BEDRIJF / KVK NUMMER",vLicense:"ELEKTRISCH LICENSIENUMMER",vCountry:"WERKLAND",b2bInfo:"Bulkaccounts voor 10+ medewerkers. Prijs op maat: ",vBtn:"Verificatieverzoek indienen",mPanel:"🔧 Vakmanspaneel",logout:"Uitloggen",mmAi:"AI Technische Assistent",mmAiSub:"Schema lezen, technische vragen, fotoanalyse",mmPlan:"Systeemplanner",mmPlanSub:"Volledige elektrische infrastructuur ontwerpen",mmWatt:"Watt & Circuit Calculator",mmWattSub:"Capaciteitscontrole met regelgevingswaarschuwingen",mmRegs:"EU Regelgevingsdatabase",mmRegsSub:"6 landen — actuele standaarden",proComing:"PDF rapporten, geavanceerde tools, prioriteit AI",mAiTitle:"AI Technische Assistent",mAiSub2:"Professionele analyse per EU-norm",regLbl:"REGELGEVINGSSTANDAARD",schemaLbl:"FOTO / SCHEMA (OPTIONEEL)",mUpload:"Schema / schakelkastfoto uploaden",techLbl:"TECHNISCHE VRAAG",mAnalyze:"Technische Analyse",planTitle:"Systeemplanner",planSub:"Elektrische infrastructuur ontwerpen",areaLbl:"TOTAAL OPPERVLAK (m²)",roomsLbl:"AANTAL KAMERS",extraLbl:"EXTRA SYSTEMEN",genBtn:"Systeemplan genereren",mWattTitle:"Watt & Circuit Calculator",mWattSub2:"Capaciteitscontrole met regelgevingswaarschuwingen",mAddDev:"Apparaat toevoegen",mRegsTitle:"📚 EU Regelgevingsdatabase",aiLabel:"AI ANALYSERESULTAAT",aiWarn:"⚠️ Deze analyse is uitsluitend informatief. Raadpleeg altijd een erkend elektricien.",loading:"Analyseren...",loadingSub:"Standaard toepassen: ",kwMonthly:"Maandelijkse Kosten",kwTotal:"Totaal Vermogen",kwDay:"Per Dag",kwYear:"Per Jaar",totalMax:"Totaal / Maximum",critical:"🔴 KRITIEK: Lijnkapaciteit overschreden!",warning:"🟡 WAARSCHUWING: Dicht bij capaciteit",safe:"✅ Veilig — Lijnkapaciteit voldoende",sepCircuit:"→ Aparte kring aanbevolen",kitchenRule:"KEUKENREGEL",legalNote:"WETTELIJKE NOOT",maxSock:"Max stopcontacten/kring",lightCable:"Verlichtingskabel",sockCable:"Stopcontactkabel",kitchenCable:"Keukenkabel",ovenCable:"Ovenkabel",bathRcd:"Badkamer RCD",genRcd:"Algemene RCD",inspBody:"Inspectie-instantie",circuits:"Circuits",legalWarn:"⚠️ WETTELIJKE WAARSCHUWING",pdfBtn:"📄 PDF Rapport downloaden"},
+  de:{tagline:"Smarter <em>Elektro</em><br>Assistent",selectCountry:"Land auswählen",customer:"Kunde",customerSub:"Fehleranalyse, Watt-Prüfung, Elektriker-Leitfaden",master:"Zugelassener Fachmann",masterSub:"Technischer Assistent, Systemplaner, Vorschriftendatenbank",stat1:"EU-Länder",stat2:"KI-Betrieben",stat3:"B2B-Paket",back:"Zurück",cPanel:"Kundenpanel",cPanelSub:"KI-Tools für Ihren Elektrobedarf",mAi:"Fehler- & Problemanalyse",mAiSub:"Foto hochladen oder Problem beschreiben",mWatt:"Watt-Kapazitätsprüfung",mWattSub:"Kann Ihre Leitung diese Last tragen?",mKw:"Monatliche Energiekosten",mKwSub:"Stromrechnung berechnen",mRegs:"Vorschriften",mRegsSub:"Elektrische Normen für Ihr Land",aiTitle:"KI-Fehleranalyse",aiSub:"Problem beschreiben oder Foto hochladen",photoLbl:"FOTO (OPTIONAL)",uploadTxt:"Foto hochladen",descLbl:"PROBLEM BESCHREIBEN",placeholder:"z.B. Sicherung fliegt raus, Steckdose funktioniert nicht...",analyzeBtn:"Mit KI analysieren",wattTitle:"Watt-Kapazitätsprüfung",wattSub:"Geräte hinzufügen zur Kapazitätsprüfung",addDev:"Gerät hinzufügen",kwTitle:"Monatliche Energiekosten",kwSub:"Stromrechnung berechnen",tariffLbl:"STROMTARIF (€/kWh)",kwAdd:"Gerät hinzufügen",kwCalc:"Kosten berechnen",proTitle:"Pro-Anmeldung",proSub:"Für zugelassene Elektriker und Unternehmen",vName:"NAME / FIRMENNAME",vCompany:"UNTERNEHMEN / HANDELSREGISTER",vLicense:"ELEKTRISCHE LIZENZNUMMER",vCountry:"ARBEITSLAND",b2bInfo:"Sammelkonten für 10+ Mitarbeiter. Individueller Preis: ",vBtn:"Verifizierungsantrag senden",mPanel:"🔧 Fachmann-Panel",logout:"Abmelden",mmAi:"KI Technischer Assistent",mmAiSub:"Schema lesen, technische Fragen, Fotoanalyse",mmPlan:"Systemplaner",mmPlanSub:"Elektrische Infrastruktur von Grund auf planen",mmWatt:"Watt & Schaltungsrechner",mmWattSub:"Kapazitätsprüfung mit Vorschriftenwarnungen",mmRegs:"EU-Vorschriftendatenbank",mmRegsSub:"6 Länder — aktuelle Normen",proComing:"PDF-Berichte, erweiterte Tools, Prioritäts-KI",mAiTitle:"KI Technischer Assistent",mAiSub2:"Professionelle Analyse nach EU-Norm",regLbl:"VORSCHRIFTENSTANDARD",schemaLbl:"FOTO / SCHEMA (OPTIONAL)",mUpload:"Schema / Schaltschrankfoto hochladen",techLbl:"TECHNISCHE FRAGE",mAnalyze:"Technische Analyse",planTitle:"Systemplaner",planSub:"Elektrische Infrastruktur planen",areaLbl:"GESAMTFLÄCHE (m²)",roomsLbl:"ANZAHL RÄUME",extraLbl:"EXTRA SYSTEME",genBtn:"Systemplan erstellen",mWattTitle:"Watt & Schaltungsrechner",mWattSub2:"Kapazitätsprüfung mit Vorschriftenwarnungen",mAddDev:"Gerät hinzufügen",mRegsTitle:"📚 EU-Vorschriftendatenbank",aiLabel:"KI-ANALYSEERGEBNIS",aiWarn:"⚠️ Diese Analyse dient nur zur Information. Konsultieren Sie immer einen zugelassenen Elektriker.",loading:"Wird analysiert...",loadingSub:"Standard anwenden: ",kwMonthly:"Monatliche Kosten",kwTotal:"Gesamtleistung",kwDay:"Pro Tag",kwYear:"Pro Jahr",totalMax:"Gesamt / Maximum",critical:"🔴 KRITISCH: Leitungskapazität überschritten!",warning:"🟡 WARNUNG: Nah an der Kapazität",safe:"✅ Sicher — Leitungskapazität ausreichend",sepCircuit:"→ Separater Stromkreis empfohlen",kitchenRule:"KÜCHENREGEL",legalNote:"RECHTLICHER HINWEIS",maxSock:"Max Steckdosen/Kreis",lightCable:"Beleuchtungskabel",sockCable:"Steckdosenkabel",kitchenCable:"Küchenkabel",ovenCable:"Ofenkabel",bathRcd:"Badezimmer RCD",genRcd:"Allgemeiner RCD",inspBody:"Prüfstelle",circuits:"Stromkreise",legalWarn:"⚠️ RECHTLICHE WARNUNG",pdfBtn:"📄 PDF-Bericht herunterladen"},
+  fr:{tagline:"Assistant <em>Électrique</em><br>Intelligent",selectCountry:"Sélectionnez votre pays",customer:"Client",customerSub:"Analyse de panne, contrôle watt, guide électricien",master:"Pro Agréé",masterSub:"Assistant technique, planificateur système, base réglementaire",stat1:"Pays UE",stat2:"IA Intégrée",stat3:"Forfait Pro",back:"Retour",cPanel:"Panneau Client",cPanelSub:"Outils IA pour vos besoins électriques",mAi:"Analyse de Panne",mAiSub:"Téléchargez une photo ou décrivez le problème",mWatt:"Contrôle Capacité Watt",mWattSub:"Votre ligne peut-elle supporter cette charge?",mKw:"Coût Énergétique Mensuel",mKwSub:"Calculez votre facture d'électricité",mRegs:"Réglementations",mRegsSub:"Normes électriques de votre pays",aiTitle:"Analyse IA de Panne",aiSub:"Décrivez le problème ou téléchargez une photo",photoLbl:"PHOTO (OPTIONNEL)",uploadTxt:"Télécharger une photo",descLbl:"DÉCRIVEZ VOTRE PROBLÈME",placeholder:"ex. Le disjoncteur saute, prise ne fonctionne pas...",analyzeBtn:"Analyser avec IA",wattTitle:"Contrôle Capacité Watt",wattSub:"Ajoutez des appareils pour vérifier la capacité",addDev:"Ajouter un Appareil",kwTitle:"Coût Énergétique Mensuel",kwSub:"Calculez votre facture d'électricité",tariffLbl:"TARIF ÉLECTRICITÉ (€/kWh)",kwAdd:"Ajouter un Appareil",kwCalc:"Calculer le Coût",proTitle:"Connexion Pro",proSub:"Pour les électriciens agréés et les entreprises",vName:"NOM / NOM DE L'ENTREPRISE",vCompany:"ENTREPRISE / NUMÉRO SIRET",vLicense:"NUMÉRO DE LICENCE ÉLECTRIQUE",vCountry:"PAYS D'OPÉRATION",b2bInfo:"Comptes groupés pour 10+ employés. Tarification personnalisée: ",vBtn:"Soumettre la Vérification",mPanel:"🔧 Panneau Pro",logout:"Déconnexion",mmAi:"Assistant Technique IA",mmAiSub:"Lecture de schémas, Q&R technique, analyse photo",mmPlan:"Planificateur Système",mmPlanSub:"Concevoir toute l'infrastructure électrique",mmWatt:"Calculateur Watt & Circuit",mmWattSub:"Contrôle capacité avec alertes réglementaires",mmRegs:"Base Réglementaires UE",mmRegsSub:"6 pays — normes actuelles",proComing:"Rapports PDF, outils avancés, IA prioritaire",mAiTitle:"Assistant Technique IA",mAiSub2:"Analyse professionnelle par norme UE",regLbl:"NORME RÉGLEMENTAIRE",schemaLbl:"PHOTO / SCHÉMA (OPTIONNEL)",mUpload:"Télécharger schéma / photo tableau",techLbl:"QUESTION TECHNIQUE",mAnalyze:"Analyse Technique",planTitle:"Planificateur Système",planSub:"Concevoir l'infrastructure électrique",areaLbl:"SURFACE TOTALE (m²)",roomsLbl:"NOMBRE DE PIÈCES",extraLbl:"SYSTÈMES SUPPLÉMENTAIRES",genBtn:"Générer le Plan",mWattTitle:"Calculateur Watt & Circuit",mWattSub2:"Contrôle capacité avec alertes réglementaires",mAddDev:"Ajouter un Appareil",mRegsTitle:"📚 Base Réglementaires UE",aiLabel:"RÉSULTAT ANALYSE IA",aiWarn:"⚠️ Cette analyse est fournie à titre informatif uniquement. Consultez toujours un électricien agréé.",loading:"Analyse en cours...",loadingSub:"Application de la norme ",kwMonthly:"Coût Mensuel",kwTotal:"Puissance Totale",kwDay:"Par Jour",kwYear:"Par An",totalMax:"Total / Maximum",critical:"🔴 CRITIQUE: Capacité de ligne dépassée!",warning:"🟡 AVERTISSEMENT: Proche de la capacité",safe:"✅ Sûr — Capacité de ligne suffisante",sepCircuit:"→ Circuit séparé recommandé",kitchenRule:"RÈGLE CUISINE",legalNote:"NOTE LÉGALE",maxSock:"Max prises/circuit",lightCable:"Câble éclairage",sockCable:"Câble prise",kitchenCable:"Câble cuisine",ovenCable:"Câble four",bathRcd:"RCD salle de bain",genRcd:"RCD général",inspBody:"Organisme de contrôle",circuits:"Circuits",legalWarn:"⚠️ AVERTISSEMENT LÉGAL",pdfBtn:"📄 Télécharger Rapport PDF"},
+  tr:{tagline:"Elektrik İşlerinde<br><em>Akıllı Asistan</em>",selectCountry:"Ülkenizi seçin",customer:"Müşteri",customerSub:"Arıza analizi, watt kontrolü, elektrikçi planı",master:"Lisanslı Usta",masterSub:"Teknik asistan, sistem planlayıcı, yönetmelik rehberi",stat1:"AB Ülkesi",stat2:"Destekli",stat3:"Firma Paketi",back:"Geri",cPanel:"Müşteri Paneli",cPanelSub:"Ev elektriğiniz için AI destekli araçlar",mAi:"Arıza & Sorun Analizi",mAiSub:"Fotoğraf yükle veya problemi yaz",mWatt:"Watt Kapasite Kontrolü",mWattSub:"Hattınız bu yükü taşıyabilir mi?",mKw:"Aylık Enerji Maliyeti",mKwSub:"Elektrik faturanızı hesaplayın",mRegs:"Yönetmelikler",mRegsSub:"Ülke elektrik standartları",aiTitle:"AI Arıza Analizi",aiSub:"Problemi anlatın veya fotoğraf ekleyin",photoLbl:"FOTOĞRAF (İSTEĞE BAĞLI)",uploadTxt:"Fotoğraf yükle",descLbl:"PROBLEMİNİZİ ANLATIN",placeholder:"Örn: Sigorta atıyor, priz çalışmıyor, yanık kokusu...",analyzeBtn:"AI ile Analiz Et",wattTitle:"Watt Kapasite Kontrolü",wattSub:"Kapasite kontrolü için cihaz ekleyin",addDev:"Cihaz Ekle",kwTitle:"Aylık Enerji Maliyeti",kwSub:"Elektrik faturanızı hesaplayın",tariffLbl:"ELEKTRİK TARİFESİ (€/kWh)",kwAdd:"Cihaz Ekle",kwCalc:"Maliyeti Hesapla",proTitle:"Usta / Pro Girişi",proSub:"Lisanslı elektrikçiler ve firmalar için",vName:"AD SOYAD / FİRMA ADI",vCompany:"ŞİRKET / KVK / BCE NO",vLicense:"ELEKTRİK LİSANS NO",vCountry:"ÇALIŞTIĞINIZ ÜLKE",b2bInfo:"10+ çalışan için toplu kullanıcı hesabı. Özel fiyatlandırma: ",vBtn:"Doğrulama Başvurusu Gönder",mPanel:"🔧 Usta Paneli",logout:"Çıkış",mmAi:"AI Teknik Asistan",mmAiSub:"Şema okuma, teknik soru, fotoğraf analizi",mmPlan:"Sıfırdan Sistem Planlayıcı",mmPlanSub:"Evin tüm elektrik altyapısını planla",mmWatt:"Watt & Devre Hesaplayıcı",mmWattSub:"Kapasite kontrolü, yönetmelik uyarıları",mmRegs:"AB Yönetmelik Veritabanı",mmRegsSub:"6 ülke — güncel standartlar",proComing:"PDF rapor, gelişmiş araçlar, öncelikli AI",mAiTitle:"AI Teknik Asistan",mAiSub2:"AB standardına göre profesyonel analiz",regLbl:"YÖNETMELİK STANDARDI",schemaLbl:"FOTOĞRAF / ŞEMA (İSTEĞE BAĞLI)",mUpload:"Şema / Pano fotoğrafı yükle",techLbl:"TEKNİK SORUNUZ",mAnalyze:"Teknik Analiz Et",planTitle:"Sıfırdan Sistem Planlayıcı",planSub:"Elektrik altyapısı tasarla",areaLbl:"TOPLAM ALAN (m²)",roomsLbl:"ODA SAYISI",extraLbl:"EK SİSTEMLER",genBtn:"Sistem Planı Oluştur",mWattTitle:"Watt & Devre Hesaplayıcı",mWattSub2:"Kapasite kontrolü, yönetmelik uyarıları",mAddDev:"Cihaz Ekle",mRegsTitle:"📚 AB Yönetmelik Veritabanı",aiLabel:"AI ANALİZ SONUCU",aiWarn:"⚠️ Bu analiz bilgilendirme amaçlıdır. Elektrik işleri için mutlaka lisanslı elektrikçiye danışın.",loading:"Analiz ediliyor...",loadingSub:"Standart uygulanıyor: ",kwMonthly:"Aylık Maliyet",kwTotal:"Toplam Güç",kwDay:"Günlük",kwYear:"Yıllık",totalMax:"Toplam / Maksimum",critical:"🔴 KRİTİK: Hat kapasitesi aşıldı!",warning:"🟡 UYARI: Kapasiteye çok yakın",safe:"✅ Güvenli — Hat kapasitesi yeterli",sepCircuit:"→ Ayrı devre gerekli",kitchenRule:"MUTFAK KURALI",legalNote:"YASAL NOT",maxSock:"Max priz/devre",lightCable:"Aydınlatma kablosu",sockCable:"Priz kablosu",kitchenCable:"Mutfak kablosu",ovenCable:"Fırın kablosu",bathRcd:"Banyo RCD",genRcd:"Genel RCD",inspBody:"Denetim kurumu",circuits:"Devre",legalWarn:"⚠️ YASAL UYARI",pdfBtn:"📄 PDF Rapor İndir"}
+};
 
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+let lang='en',selectedCountry='BE',masterCountry='BE';
+let imageB64_c=null,imageB64_m=null;
+let devices_c=[{name:'Oven',watt:3000},{name:'Kettle',watt:2500},{name:'Microwave',watt:1200}];
+let devices_m=[{name:'Oven',watt:3000},{name:'Kettle',watt:2500}];
+let kw_devices=[{name:'Refrigerator',watt:150,hours:24},{name:'Washing Machine',watt:2000,hours:1},{name:'TV',watt:100,hours:5}];
+let opts={ev:false,solar:false,ac:false};
+let lastAiResult='',lastAiTitle='';
+
+function t(k){return(T[lang]||T.en)[k]||T.en[k]||k;}
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById('screen-'+id).classList.add('active');
   window.scrollTo(0,0);
-  if(id==='customer-home') renderCountries('country-customer', false);
-  if(id==='master-verify') renderCountries('country-verify', false);
-  if(id==='master-ai') renderCountries('country-master-ai', true);
-  if(id==='master-plan') renderCountries('country-master-plan', true);
-  if(id==='master-watt') { renderCountries('country-master-watt', true); renderWatt('m'); }
-  if(id==='master-regs') { renderCountries('country-master-regs', true); renderRegs('m'); }
-  if(id==='customer-watt') renderWatt('c');
-  if(id==='customer-regs') renderRegs('c');
+  if(id==='master-verify')renderCountries('country-verify',false);
+  if(id==='master-ai')renderCountries('country-master-ai',true);
+  if(id==='master-plan')renderCountries('country-master-plan',true);
+  if(id==='master-watt'){renderCountries('country-master-watt',true);renderWatt('m');}
+  if(id==='master-regs'){renderCountries('country-master-regs',true);renderRegs('m');}
+  if(id==='customer-watt')renderWatt('c');
+  if(id==='customer-regs')renderRegs('c');
+  if(id==='customer-kw')renderKwDevices();
+}
+function goHome(){showScreen('home');}
+function goLangSelect(){showScreen('lang');}
+
+function selectLang(l){
+  lang=l;
+  const flags={en:'🇬🇧',nl:'🇳🇱',de:'🇩🇪',fr:'🇫🇷',tr:'🇹🇷'};
+  document.getElementById('lang-display').textContent=flags[l]+' '+l.toUpperCase();
+  applyT();
+  renderHomeCountryGrid();
+  showScreen('home');
 }
 
-function goHome() { showScreen('home'); }
+function applyT(){
+  const map=[
+    ['h-tagline','tagline'],['h-select-country','selectCountry'],['h-customer','customer'],['h-customer-sub','customerSub'],
+    ['h-master','master'],['h-master-sub','masterSub'],['h-stat1','stat1'],['h-stat2','stat2'],['h-stat3','stat3'],
+    ['c-panel','cPanel'],['c-panel-sub','cPanelSub'],['c-m-ai','mAi'],['c-m-ai-sub','mAiSub'],
+    ['c-m-watt','mWatt'],['c-m-watt-sub','mWattSub'],['c-m-kw','mKw'],['c-m-kw-sub','mKwSub'],
+    ['c-m-regs','mRegs'],['c-m-regs-sub','mRegsSub'],['c-ai-title','aiTitle'],['c-ai-sub','aiSub'],
+    ['c-photo-lbl','photoLbl'],['c-upload-txt','uploadTxt'],['c-desc-lbl','descLbl'],['c-analyze-btn','analyzeBtn'],
+    ['c-watt-title','wattTitle'],['c-watt-sub','wattSub'],['c-add-dev','addDev'],
+    ['c-kw-title','kwTitle'],['c-kw-sub','kwSub'],['c-tariff-lbl','tariffLbl'],['c-kw-add','kwAdd'],['c-kw-calc','kwCalc'],
+    ['m-pro-title','proTitle'],['m-pro-sub','proSub'],['v-name-lbl','vName'],['v-company-lbl','vCompany'],
+    ['v-license-lbl','vLicense'],['v-country-lbl','vCountry'],['v-b2b-info','b2bInfo'],['v-btn','vBtn'],
+    ['m-panel','mPanel'],['m-logout','logout'],
+    ['m-m-ai','mmAi'],['m-m-ai-sub','mmAiSub'],['m-m-plan','mmPlan'],['m-m-plan-sub','mmPlanSub'],
+    ['m-m-watt','mmWatt'],['m-m-watt-sub','mmWattSub'],['m-m-regs','mmRegs'],['m-m-regs-sub','mmRegsSub'],
+    ['m-pro-coming','proComing'],['m-ai-title','mAiTitle'],['m-ai-sub','mAiSub2'],
+    ['m-reg-lbl','regLbl'],['m-schema-lbl','schemaLbl'],['m-upload-txt','mUpload'],['m-tech-lbl','techLbl'],['m-analyze-btn','mAnalyze'],
+    ['m-plan-title','planTitle'],['m-plan-sub','planSub'],['m-area-lbl','areaLbl'],['m-rooms-lbl','roomsLbl'],
+    ['m-extra-lbl','extraLbl'],['m-gen-btn','genBtn'],['m-watt-title','mWattTitle'],['m-watt-sub','mWattSub2'],
+    ['m-add-dev','mAddDev'],['m-regs-title','mRegsTitle'],
+  ];
+  map.forEach(([id,key])=>{const el=document.getElementById(id);if(el)el.innerHTML=t(key);});
+  document.querySelectorAll('.bk').forEach(el=>el.textContent=t('back'));
+  const ta=document.getElementById('ai-input-c');if(ta)ta.placeholder=t('placeholder');
+}
 
-function renderCountries(elId, isMaster) {
-  const el = document.getElementById(elId);
-  if(!el) return;
-  el.innerHTML = Object.entries(REGS).map(([code,r])=>`
+function renderHomeCountryGrid(){
+  const el=document.getElementById('home-country-grid');if(!el)return;
+  el.innerHTML=Object.entries(REGS).map(([code,r])=>`
+    <div class="country-card ${selectedCountry===code?'active':''}" onclick="selectHomeCountry('${code}')">
+      <div class="cc-flag">${r.flag}</div><div class="cc-code">${code}</div><div class="cc-std">${r.std}</div>
+    </div>`).join('');
+}
+
+function selectHomeCountry(code){selectedCountry=code;masterCountry=code;renderHomeCountryGrid();}
+
+function renderCountries(elId,isMaster){
+  const el=document.getElementById(elId);if(!el)return;
+  el.innerHTML=Object.entries(REGS).map(([code,r])=>`
     <button class="country-btn ${(isMaster?masterCountry:selectedCountry)===code?(isMaster?'active-blue':'active'):''}"
-    onclick="selectCountry('${code}',${isMaster},'${elId}')">${r.flag} ${code}</button>
-  `).join('');
+    onclick="selectCountry('${code}',${isMaster},'${elId}')">${r.flag} ${code}</button>`).join('');
 }
 
-function selectCountry(code, isMaster, elId) {
-  if(isMaster) masterCountry=code; else selectedCountry=code;
-  renderCountries(elId, isMaster);
-  if(elId==='country-master-watt') renderWatt('m');
-  if(elId==='country-master-regs') renderRegs('m');
-  if(elId==='country-customer') { document.getElementById('regs-sub-c').textContent = REGS[code].std + ' kuralları'; }
+function selectCountry(code,isMaster,elId){
+  if(isMaster)masterCountry=code;else selectedCountry=code;
+  renderCountries(elId,isMaster);
+  if(elId==='country-master-watt')renderWatt('m');
+  if(elId==='country-master-regs')renderRegs('m');
 }
 
-function renderWatt(mode) {
-  const devices = mode==='c' ? devices_c : devices_m;
-  const country = mode==='c' ? selectedCountry : masterCountry;
-  const el = document.getElementById('watt-list-'+mode);
-  el.innerHTML = devices.map((d,i)=>`
+function renderWatt(mode){
+  const devs=mode==='c'?devices_c:devices_m;
+  const country=mode==='c'?selectedCountry:masterCountry;
+  document.getElementById('watt-list-'+mode).innerHTML=devs.map((d,i)=>`
     <div class="watt-row">
-      <input type="text" value="${d.name}" placeholder="Cihaz adı" onchange="updateDevice(${i},'name',this.value,'${mode}')">
-      <input type="number" value="${d.watt}" placeholder="W" onchange="updateDevice(${i},'watt',this.value,'${mode}')">
+      <input type="text" value="${d.name}" onchange="updateDevice(${i},'name',this.value,'${mode}')">
+      <input type="number" value="${d.watt}" onchange="updateDevice(${i},'watt',this.value,'${mode}')">
       <button class="del-btn" onclick="removeDevice(${i},'${mode}')">×</button>
-    </div>
-  `).join('');
-  const total = devices.reduce((s,d)=>s+(+d.watt||0),0);
-  const max = 230*16;
-  const pct = Math.min(total/max*100,100);
-  const safe = total <= max*0.8;
-  const warn = total > max*0.8 && total <= max;
-  const over = total > max;
-  const reg = REGS[country];
-  const statusColor = over ? 'var(--red)' : warn ? '#fbbf24' : 'var(--green)';
-  const statusText = over ? '🔴 KRİTİK: Hat kapasitesi aşıldı!' : warn ? '🟡 UYARI: Kapasiteye çok yakın' : '✅ Güvenli — Hat kapasitesi yeterli';
-  const borderColor = over ? 'rgba(239,68,68,0.25)' : warn ? 'rgba(251,191,36,0.25)' : 'rgba(16,185,129,0.2)';
-
-  document.getElementById('watt-result-'+mode).innerHTML = `
-    <div style="background:var(--bg2);border:1px solid ${borderColor};border-radius:16px;padding:18px">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-        <span style="color:var(--text3);font-size:12px">Toplam / Maksimum</span>
-        <span style="font-family:'Syne',sans-serif;font-weight:900;font-size:16px;color:${statusColor}">${total}W / ${max}W</span>
+    </div>`).join('');
+  const total=devs.reduce((s,d)=>s+(+d.watt||0),0);
+  const max=230*16,pct=Math.min(total/max*100,100);
+  const over=total>max,warn=total>max*0.8&&!over;
+  const col=over?'var(--red2)':warn?'#fbbf24':'var(--green2)';
+  const bc=over?'rgba(217,64,64,0.2)':warn?'rgba(251,191,36,0.2)':'rgba(26,158,110,0.18)';
+  const reg=REGS[country];
+  document.getElementById('watt-result-'+mode).innerHTML=`
+    <div style="background:var(--bg2);border:1px solid ${bc};border-radius:14px;padding:16px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <span style="color:var(--text3);font-size:11px">${t('totalMax')}</span>
+        <span style="font-family:'Playfair Display',serif;font-weight:900;font-size:17px;color:${col}">${total}W / ${max}W</span>
       </div>
-      <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${statusColor}"></div></div>
-      <div style="color:${statusColor};font-size:12px;margin-top:10px;font-weight:700">${statusText}</div>
-      ${devices.filter(d=>d.watt>2000).map(d=>`<div style="color:var(--blue2);font-size:11px;margin-top:6px">⚡ ${d.name} (${d.watt}W) → Ayrı devre önerilir</div>`).join('')}
+      <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${col}"></div></div>
+      <div style="color:${col};font-size:12px;margin-top:10px;font-weight:700">${over?t('critical'):warn?t('warning'):t('safe')}</div>
+      ${devs.filter(d=>d.watt>2000).map(d=>`<div style="color:var(--blue2);font-size:11px;margin-top:5px">⚡ ${d.name} (${d.watt}W) ${t('sepCircuit')}</div>`).join('')}
     </div>
-    <div class="info-box"><div class="info-title">📋 ${reg.flag} ${reg.std} — MUTFAK KURALI</div>${reg.kitchen}</div>
-  `;
+    <div class="info-box"><div class="box-title bt-a">${reg.flag} ${reg.std} — ${t('kitchenRule')}</div>${reg.kitchen}</div>`;
 }
+function updateDevice(i,f,v,m){const a=m==='c'?devices_c:devices_m;a[i][f]=f==='watt'?+v:v;renderWatt(m);}
+function removeDevice(i,m){if(m==='c')devices_c.splice(i,1);else devices_m.splice(i,1);renderWatt(m);}
+function addDevice(){devices_c.push({name:'',watt:0});renderWatt('c');}
+function addDeviceM(){devices_m.push({name:'',watt:0});renderWatt('m');}
 
-function updateDevice(i,field,val,mode) {
-  const arr = mode==='c'?devices_c:devices_m;
-  arr[i][field] = field==='watt'?+val:val;
-  renderWatt(mode);
+function renderKwDevices(){
+  document.getElementById('kw-devices-list').innerHTML=kw_devices.map((d,i)=>`
+    <div style="display:grid;grid-template-columns:1fr 80px 70px 36px;gap:6px;margin-bottom:7px;align-items:center">
+      <input type="text" value="${d.name}" placeholder="Appliance" onchange="kw_devices[${i}].name=this.value" style="font-size:12px;padding:10px 12px">
+      <input type="number" value="${d.watt}" placeholder="W" onchange="kw_devices[${i}].watt=+this.value" style="font-size:12px;padding:10px 12px">
+      <input type="number" value="${d.hours}" placeholder="h" onchange="kw_devices[${i}].hours=+this.value" style="font-size:12px;padding:10px 12px">
+      <button class="del-btn" onclick="kw_devices.splice(${i},1);renderKwDevices()" style="height:40px;padding:0 10px">×</button>
+    </div>`).join('');
 }
-function removeDevice(i,mode) {
-  if(mode==='c') devices_c.splice(i,1); else devices_m.splice(i,1);
-  renderWatt(mode);
-}
-function addDevice() { devices_c.push({name:'',watt:0}); renderWatt('c'); }
-function addDeviceM() { devices_m.push({name:'',watt:0}); renderWatt('m'); }
+function addKwDevice(){kw_devices.push({name:'',watt:0,hours:1});renderKwDevices();}
 
-function renderRegs(mode) {
-  const country = mode==='c'?selectedCountry:masterCountry;
-  const r = REGS[country];
-  const titleEl = document.getElementById('regs-title-'+(mode==='c'?'c':'m'));
-  if(titleEl) titleEl.textContent = r.flag+' '+r.name+' — '+r.std;
-  const el = document.getElementById('regs-content-'+mode);
-  el.innerHTML = `
-    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:4px 16px;margin-bottom:12px">
-    ${[
-      ['Max priz / devre', r.maxSock+' adet'],
-      ['Aydınlatma kablosu', r.cables.light+'mm²'],
-      ['Priz kablosu', r.cables.sock+'mm²'],
-      ['Mutfak kablosu', r.cables.kitchen+'mm²'],
-      ['Fırın kablosu', r.cables.oven+'mm²'],
-      ['Banyo RCD', r.rcd.bath+'mA'],
-      ['Genel RCD', r.rcd.gen+'mA'],
-      ['Denetim kurumu', r.inspect],
-    ].map(([k,v])=>`<div class="reg-row"><span class="reg-key">${k}</span><span class="reg-val">${v}</span></div>`).join('')}
+function calcKw(){
+  const tariff=+document.getElementById('kw-tariff').value||0.28;
+  let totalWh=0;kw_devices.forEach(d=>totalWh+=(+d.watt||0)*(+d.hours||0));
+  const dKwh=totalWh/1000,mKwh=dKwh*30,yKwh=dKwh*365;
+  const mCost=mKwh*tariff,dCost=dKwh*tariff,yCost=yKwh*tariff;
+  const totalW=kw_devices.reduce((s,d)=>s+(+d.watt||0),0);
+  document.getElementById('kw-result').innerHTML=`
+    <div style="background:var(--bg2);border:1px solid rgba(26,158,110,0.2);border-radius:15px;padding:18px;margin-top:14px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:4px">
+        <div>
+          <div style="font-size:9px;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px">${t('kwMonthly')}</div>
+          <span class="kw-big">€${mCost.toFixed(2)}</span>
+        </div>
+        <span class="chip chip-g">✓ ${mKwh.toFixed(1)} kWh</span>
+      </div>
+      <div class="kw-grid">
+        <div class="kw-cell"><div class="kw-cell-label">${t('kwDay')}</div><div class="kw-cell-value" style="color:var(--green2)">€${dCost.toFixed(2)}</div></div>
+        <div class="kw-cell"><div class="kw-cell-label">${t('kwYear')}</div><div class="kw-cell-value">€${yCost.toFixed(0)}</div></div>
+        <div class="kw-cell"><div class="kw-cell-label">${t('kwTotal')}</div><div class="kw-cell-value">${totalW}W</div></div>
+        <div class="kw-cell"><div class="kw-cell-label">Tariff</div><div class="kw-cell-value">€${tariff}/kWh</div></div>
+      </div>
+      <div style="margin-top:14px">
+        ${kw_devices.filter(d=>d.watt>0&&d.hours>0).sort((a,b)=>(b.watt*b.hours)-(a.watt*a.hours)).slice(0,5).map(d=>{
+          const c=(d.watt*d.hours/1000*30*tariff).toFixed(2);
+          const p=totalWh>0?Math.round(d.watt*d.hours/totalWh*100):0;
+          return`<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border)">
+            <span style="font-size:12px;color:var(--text2)">${d.name||'—'}</span>
+            <div style="display:flex;align-items:center;gap:8px">
+              <div style="width:${Math.max(p,2)}px;height:4px;background:var(--green2);border-radius:2px;opacity:0.6"></div>
+              <span style="font-size:12px;font-weight:700;color:var(--text)">€${c}</span>
+            </div>
+          </div>`;}).join('')}
+      </div>
     </div>
-    <div class="info-box"><div class="info-title">🍳 MUTFAK KURALI</div>${r.kitchen}</div>
-    <div class="danger-box"><div class="danger-title">📋 YASAL NOT</div>${r.note}</div>
-  `;
+    <button class="pdf-btn" onclick="downloadPdf('kw')">${t('pdfBtn')}</button>`;
 }
 
-function handleImage(mode, input) {
-  const file = input.files[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    const b64 = e.target.result.split(',')[1];
-    const url = e.target.result;
-    if(mode==='c') { imageB64_c=b64; document.getElementById('upload-c').innerHTML=`<img src="${url}" style="max-height:160px;border-radius:10px">`; }
-    else { imageB64_m=b64; document.getElementById('upload-m').innerHTML=`<img src="${url}" style="max-height:160px;border-radius:10px">`; }
-  };
-  reader.readAsDataURL(file);
+function renderRegs(mode){
+  const country=mode==='c'?selectedCountry:masterCountry;
+  const r=REGS[country];
+  const te=document.getElementById('regs-title-'+(mode==='c'?'c':'m'));
+  if(te)te.textContent=r.flag+' '+r.name+' — '+r.std;
+  document.getElementById('regs-content-'+mode).innerHTML=`
+    <div class="reg-table">
+    ${[[t('maxSock'),r.maxSock+' pcs'],[t('lightCable'),r.cables.light+'mm²'],[t('sockCable'),r.cables.sock+'mm²'],[t('kitchenCable'),r.cables.kitchen+'mm²'],[t('ovenCable'),r.cables.oven+'mm²'],[t('bathRcd'),r.rcd.bath+'mA'],[t('genRcd'),r.rcd.gen+'mA'],[t('inspBody'),r.inspect]]
+    .map(([k,v])=>`<div class="reg-row"><span class="reg-key">${k}</span><span class="reg-val">${v}</span></div>`).join('')}
+    </div>
+    <div class="info-box"><div class="box-title bt-a">🍳 ${t('kitchenRule')}</div>${r.kitchen}</div>
+    <div class="danger-box"><div class="box-title bt-r">📋 ${t('legalNote')}</div>${r.note}</div>`;
 }
 
-async function callAI(prompt, b64) {
-  const content = b64
-    ? [{type:'image',source:{type:'base64',media_type:'image/jpeg',data:b64}},{type:'text',text:prompt}]
-    : [{type:'text',text:prompt}];
-  const resp = await fetch('https://api.anthropic.com/v1/messages',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content}]})
-  });
-  const data = await resp.json();
-  return data.content?.find(b=>b.type==='text')?.text || 'Yanıt alınamadı.';
+function handleImage(mode,input){
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const b64=e.target.result.split(',')[1],url=e.target.result;
+    if(mode==='c'){imageB64_c=b64;document.getElementById('upload-c').innerHTML=`<img src="${url}">`;}
+    else{imageB64_m=b64;document.getElementById('upload-m').innerHTML=`<img src="${url}">`;}
+  };reader.readAsDataURL(file);
 }
 
-async function analyzeCustomer() {
-  const text = document.getElementById('ai-input-c').value;
-  if(!text && !imageB64_c) return;
-  const reg = REGS[selectedCountry];
-  document.getElementById('result-c').innerHTML = `
-    <div class="loading">
-      <div class="spinner">⚡</div>
-      <div class="loading-text">AI analiz ediyor...</div>
-      <div class="loading-sub">${reg.flag} ${reg.std} standardına göre</div>
-    </div>`;
-  const prompt = `Sen bir elektrik uzmanısın. ${reg.std} standardına göre analiz et. Müşteri için sade Türkçe kullan. Şunları ver:
-
-1) ⚡ Problemin sebebi
-2) 🔴 Tehlike var mı?
-3) 🔍 Kontrol edilecekler
-4) 👷 Elektrikçiden istenecekler
-5) 💶 Tahmini maliyet
-6) 🚦 Aciliyet: 🔴 Acil / 🟡 Yakın takip / 🟢 Normal
-
-Soru: ${text}`;
-  const result = await callAI(prompt, imageB64_c);
-  document.getElementById('result-c').innerHTML = `
-    <div class="result-box">${result}</div>
-    <div class="warning-box">⚠️ Bu analiz bilgilendirme amaçlıdır. Elektrik işleri için mutlaka lisanslı elektrikçiye danışın.</div>`;
+async function callAI(prompt,b64){
+  const content=b64?[{type:'image',source:{type:'base64',media_type:'image/jpeg',data:b64}},{type:'text',text:prompt}]:[{type:'text',text:prompt}];
+  const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content}]})});
+  const data=await resp.json();
+  return data.content?.find(b=>b.type==='text')?.text||'No response received.';
 }
 
-async function analyzeMaster() {
-  const text = document.getElementById('ai-input-m').value;
-  if(!text && !imageB64_m) return;
-  const reg = REGS[masterCountry];
-  document.getElementById('result-m').innerHTML = `
-    <div class="loading">
-      <div class="spinner">⚡</div>
-      <div class="loading-text">Teknik analiz yapılıyor...</div>
-      <div class="loading-sub">${reg.flag} ${reg.std} standartları uygulanıyor</div>
-    </div>`;
-  const prompt = `Sen deneyimli bir elektrik mühendisisin. ${reg.std} standardına göre teknik destek ver. Lisanslı ustaya profesyonel teknik dil kullan. Standartlar, kablo kesitleri, bağlantı şeması önerileri, güvenlik notları ve yasal gereklilikler ver. Soru: ${text}`;
-  const result = await callAI(prompt, imageB64_m);
-  document.getElementById('result-m').innerHTML = `<div class="result-box">${result}</div>`;
+const langNames={en:'English',nl:'Dutch/Nederlands',de:'German/Deutsch',fr:'French/Français',tr:'Turkish/Türkçe'};
+
+async function analyzeCustomer(){
+  const text=document.getElementById('ai-input-c').value;
+  if(!text&&!imageB64_c)return;
+  const reg=REGS[selectedCountry];
+  document.getElementById('result-c').innerHTML=`<div class="loading"><div class="spinner">⚡</div><div class="loading-text">${t('loading')}</div><div class="loading-sub">${t('loadingSub')} ${reg.flag} ${reg.std}</div></div>`;
+  const prompt=`You are an expert electrician. Analyze according to ${reg.std} (${reg.name}). Respond ONLY in ${langNames[lang]}. Use clear simple language for a homeowner. Provide:\n1) ⚡ Cause of the problem\n2) 🔴 Is there a safety risk?\n3) 🔍 What to check yourself\n4) 👷 What to ask the electrician\n5) 💶 Estimated cost range\n6) 🚦 Urgency: 🔴 Urgent / 🟡 Soon / 🟢 Normal\n\nQuestion: ${text}`;
+  const result=await callAI(prompt,imageB64_c);
+  lastAiResult=result;lastAiTitle=t('aiTitle')+' — '+reg.flag+' '+reg.std;
+  document.getElementById('result-c').innerHTML=`<div class="result-box"><span class="result-label">${t('aiLabel')}</span>${result}</div><div class="warning-box">${t('aiWarn')}</div><button class="pdf-btn" onclick="downloadPdf('ai')">${t('pdfBtn')}</button>`;
 }
 
-function toggleOpt(key) {
-  opts[key] = !opts[key];
-  document.getElementById('tog-'+key).classList.toggle('on');
+async function analyzeMaster(){
+  const text=document.getElementById('ai-input-m').value;
+  if(!text&&!imageB64_m)return;
+  const reg=REGS[masterCountry];
+  document.getElementById('result-m').innerHTML=`<div class="loading"><div class="spinner">⚡</div><div class="loading-text">${t('loading')}</div><div class="loading-sub">${t('loadingSub')} ${reg.flag} ${reg.std}</div></div>`;
+  const prompt=`You are an experienced electrical engineer. Provide professional technical support according to ${reg.std} (${reg.name}). Respond ONLY in ${langNames[lang]}. Use technical professional language for a licensed electrician. Include: applicable standards, cable cross-sections, wiring recommendations, safety notes, legal requirements.\nQuestion: ${text}`;
+  const result=await callAI(prompt,imageB64_m);
+  lastAiResult=result;lastAiTitle=t('mAiTitle')+' — '+reg.flag+' '+reg.std;
+  document.getElementById('result-m').innerHTML=`<div class="result-box"><span class="result-label">${t('aiLabel')}</span>${result}</div><button class="pdf-btn" onclick="downloadPdf('ai')">${t('pdfBtn')}</button>`;
 }
 
-function generatePlan() {
-  const area = +document.getElementById('plan-area').value || 80;
-  const rooms = +document.getElementById('plan-rooms').value || 5;
-  const reg = REGS[masterCountry];
-  const circuits = [];
-  const lc = Math.ceil(rooms/3);
-  for(let i=0;i<lc;i++) circuits.push({name:`Aydınlatma ${i+1}`,cable:reg.cables.light+'mm²',fuse:'10A',rcd:'300mA',color:'#f59e0b'});
-  const sc = Math.ceil(area/40);
-  for(let i=0;i<sc;i++) circuits.push({name:`Priz Devresi ${i+1}`,cable:reg.cables.sock+'mm²',fuse:'16A',rcd:'300mA',color:'#3b82f6'});
-  circuits.push({name:'Mutfak — Fırın',cable:reg.cables.oven+'mm²',fuse:'32A',rcd:'30mA',color:'#ef4444'});
-  circuits.push({name:'Mutfak — Bulaşık/Çamaşır',cable:reg.cables.kitchen+'mm²',fuse:'16A',rcd:'30mA',color:'#ef4444'});
-  circuits.push({name:'Mutfak — Genel Prizler',cable:reg.cables.sock+'mm²',fuse:'16A',rcd:'30mA',color:'#ef4444'});
-  circuits.push({name:'Banyo — Islak Alan',cable:'4mm²',fuse:'20A',rcd:'30mA',color:'#8b5cf6'});
-  if(opts.ev) circuits.push({name:'EV Şarj İstasyonu',cable:'6mm²',fuse:'32A',rcd:'30mA',color:'#10b981'});
-  if(opts.solar) circuits.push({name:'Güneş Paneli İnverter',cable:'4mm²',fuse:'20A',rcd:'30mA',color:'#10b981'});
-  if(opts.ac) circuits.push({name:'Klima Sistemi',cable:'4mm²',fuse:'20A',rcd:'300mA',color:'#06b6d4'});
+function toggleOpt(key){opts[key]=!opts[key];document.getElementById('tog-'+key).classList.toggle('on');}
 
-  document.getElementById('plan-result').innerHTML = `
+function generatePlan(){
+  const area=+document.getElementById('plan-area').value||80;
+  const rooms=+document.getElementById('plan-rooms').value||5;
+  const reg=REGS[masterCountry];
+  const circuits=[];
+  for(let i=0;i<Math.ceil(rooms/3);i++)circuits.push({name:`Lighting ${i+1}`,cable:reg.cables.light+'mm²',fuse:'10A',rcd:'300mA',color:'#e8a020'});
+  for(let i=0;i<Math.ceil(area/40);i++)circuits.push({name:`Socket Circuit ${i+1}`,cable:reg.cables.sock+'mm²',fuse:'16A',rcd:'300mA',color:'#2d6be4'});
+  circuits.push({name:'Kitchen — Oven',cable:reg.cables.oven+'mm²',fuse:'32A',rcd:'30mA',color:'#d94040'});
+  circuits.push({name:'Kitchen — Dishwasher/Washer',cable:reg.cables.kitchen+'mm²',fuse:'16A',rcd:'30mA',color:'#d94040'});
+  circuits.push({name:'Kitchen — General Sockets',cable:reg.cables.sock+'mm²',fuse:'16A',rcd:'30mA',color:'#d94040'});
+  circuits.push({name:'Bathroom — Wet Zone',cable:'4mm²',fuse:'20A',rcd:'30mA',color:'#8b5cf6'});
+  if(opts.ev)circuits.push({name:'EV Charging Station',cable:'6mm²',fuse:'32A',rcd:'30mA',color:'#1a9e6e'});
+  if(opts.solar)circuits.push({name:'Solar Panel Inverter',cable:'4mm²',fuse:'20A',rcd:'30mA',color:'#1a9e6e'});
+  if(opts.ac)circuits.push({name:'Air Conditioning',cable:'4mm²',fuse:'20A',rcd:'300mA',color:'#06b6d4'});
+  document.getElementById('plan-result').innerHTML=`
     <div style="margin-top:18px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-        <div>
-          <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:900;color:var(--text)">${reg.flag} ${reg.std}</div>
-          <div style="font-size:11px;color:var(--text3);margin-top:2px">${area}m² · ${rooms} oda · ${circuits.length} devre</div>
-        </div>
-        <span class="chip amber">${circuits.length} Devre</span>
+        <div><div style="font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--text)">${reg.flag} ${reg.std}</div><div style="font-size:10px;color:var(--text3);margin-top:2px">${area}m² · ${rooms} rooms</div></div>
+        <span class="chip chip-b">${circuits.length} ${t('circuits')}</span>
       </div>
-      ${circuits.map(c=>`
-        <div class="plan-row" style="border-left:3px solid ${c.color}">
-          <div><div class="plan-name">${c.name}</div><div class="plan-detail">Kablo: ${c.cable} · RCD: ${c.rcd}</div></div>
-          <div class="plan-fuse" style="color:${c.color}">${c.fuse}</div>
-        </div>
-      `).join('')}
-      <div class="danger-box" style="margin-top:14px"><div class="danger-title">⚠️ YASAL UYARI</div>${reg.note} Uygulama sonrası ${reg.inspect} denetimi zorunludur.</div>
-    </div>
-  `;
+      ${circuits.map(c=>`<div class="plan-row" style="border-left:3px solid ${c.color}"><div><div class="plan-name">${c.name}</div><div class="plan-detail">Cable: ${c.cable} · RCD: ${c.rcd}</div></div><div class="plan-fuse" style="color:${c.color}">${c.fuse}</div></div>`).join('')}
+      <div class="danger-box" style="margin-top:12px"><div class="box-title bt-r">${t('legalWarn')}</div>${reg.note} ${t('inspBody')}: ${reg.inspect}</div>
+    </div>`;
 }
 
-function doVerify() {
-  const name = document.getElementById('v-name').value;
-  const license = document.getElementById('v-license').value;
-  if(!name || !license) { alert('Ad ve lisans numarası zorunludur.'); return; }
-  verifiedName = name;
-  document.getElementById('verified-name').textContent = '✓ ' + name + ' · ' + REGS[masterCountry].flag + ' ' + REGS[masterCountry].std;
+function doVerify(){
+  const name=document.getElementById('v-name').value,license=document.getElementById('v-license').value;
+  if(!name||!license){alert('Name and license number are required.');return;}
+  document.getElementById('verified-name').textContent='✓ '+name+' · '+REGS[masterCountry].flag+' '+REGS[masterCountry].std;
   showScreen('master-home');
 }
 
-// Language support (stub — extend as needed)
-function setLang(lang) {
-  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-  event.target.classList.add('active');
+function downloadPdf(type){
+  const reg=REGS[selectedCountry];
+  const date=new Date().toLocaleDateString();
+  let content='';
+  if(type==='ai'){
+    content=`WattDone — AI Analysis Report\n${'='.repeat(50)}\nDate: ${date}\nStandard: ${reg.flag} ${reg.name} — ${reg.std}\n\n${lastAiTitle}\n${'-'.repeat(40)}\n\n${lastAiResult}\n\n${t('aiWarn')}`;
+  }else{
+    const tariff=+document.getElementById('kw-tariff').value||0.28;
+    let tw=0;kw_devices.forEach(d=>tw+=d.watt*d.hours);
+    const mc=(tw/1000*30*tariff).toFixed(2),yc=(tw/1000*365*tariff).toFixed(0);
+    content=`WattDone — Energy Cost Report\n${'='.repeat(50)}\nDate: ${date}\nCountry: ${reg.flag} ${reg.name}\nTariff: €${tariff}/kWh\n\n${'-'.repeat(40)}\nAPPLIANCES:\n${kw_devices.map(d=>`  ${d.name}: ${d.watt}W × ${d.hours}h/day = €${(d.watt*d.hours/1000*30*tariff).toFixed(2)}/month`).join('\n')}\n${'-'.repeat(40)}\nMONTHLY TOTAL: €${mc}\nYEARLY TOTAL: €${yc}`;
+  }
+  const blob=new Blob([content],{type:'text/plain'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download=`WattDone-${date.replace(/\//g,'-')}.txt`;a.click();URL.revokeObjectURL(url);
 }
 
-// Init
-renderCountries('country-customer', false);
-renderWatt('c');
-renderWatt('m');
-renderRegs('c');
-renderRegs('m');
+// INIT
+renderHomeCountryGrid();
+renderWatt('c');renderWatt('m');
+renderRegs('c');renderRegs('m');
+renderKwDevices();
 </script>
 </body>
 </html>
